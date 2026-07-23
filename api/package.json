@@ -1,0 +1,24 @@
+{
+  "name": "litetrack-api",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@google-cloud/bigquery": "^7.3.0",
+    "@google/genai": "^2.11.0",
+    "@hono/node-server": "^1.11.1",
+    "bcryptjs": "^2.4.3",
+    "firebase-admin": "^14.2.0",
+    "hono": "^4.3.7",
+    "jsonwebtoken": "^9.0.2",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^20.10.0"
+  }
+}

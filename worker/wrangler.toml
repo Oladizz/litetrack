@@ -1,0 +1,29 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# LiteTrack Ingestion Worker — Wrangler Configuration
+# ──────────────────────────────────────────────────────────────────────────────
+
+name = "litetrack-ingest"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+# ─── Environment Variables ────────────────────────────────────────────────────
+# STORAGE_MODE controls where events are sent:
+#   "pubsub"  → Forward events to GCP Pub/Sub (production)
+#   "local"   → Log events to console for local development
+[vars]
+STORAGE_MODE = "local"
+GCP_PROJECT_ID = ""
+PUBSUB_TOPIC = ""
+
+# ─── Secrets (set via `wrangler secret put`) ──────────────────────────────────
+# These are NOT stored in this file — use the CLI to set them:
+#
+#   wrangler secret put API_KEY
+#   wrangler secret put GCP_SERVICE_ACCOUNT_KEY
+#
+# API_KEY              — Optional API key for authenticating tracker requests
+# GCP_SERVICE_ACCOUNT_KEY — JSON service account key for GCP Pub/Sub auth
+
+# ─── Production Environment ──────────────────────────────────────────────────
+[env.production]
+vars = { STORAGE_MODE = "pubsub" }
