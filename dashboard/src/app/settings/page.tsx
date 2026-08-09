@@ -24,6 +24,7 @@ export default function SettingsPage() {
   const router = useRouter();
   const [sites, setSites] = useState<any[]>([]);
   const [newDomain, setNewDomain] = useState('');
+  const [newTemplate, setNewTemplate] = useState('ecommerce');
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>([
     'pageviews', 'events', 'ecommerce', 'user_journey', 'tech_specs', 'performance', 'privacy'
   ]);
@@ -73,7 +74,7 @@ export default function SettingsPage() {
     const res = await fetch(`${apiUrl}/api/sites`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: newDomain, domain: newDomain, features: selectedFeatures })
+      body: JSON.stringify({ name: newDomain, domain: newDomain, features: selectedFeatures, template: newTemplate })
     });
     if (res.ok) {
       const data = await res.json();
@@ -152,6 +153,16 @@ export default function SettingsPage() {
                     placeholder="e.g. my-app.com"
                     className="flex-1 bg-[#121212] border border-[#333] text-white rounded-md px-4 py-2 focus:border-[#2266ec] focus:ring-1 focus:ring-[#2266ec] outline-none text-[13px] placeholder:text-[#656565]"
                   />
+                  <select
+                    value={newTemplate}
+                    onChange={e => setNewTemplate(e.target.value)}
+                    className="bg-[#121212] border border-[#333] text-white rounded-md px-4 py-2 focus:border-[#2266ec] focus:ring-1 focus:ring-[#2266ec] outline-none text-[13px]"
+                  >
+                    <option value="saas">SaaS / Web App</option>
+                    <option value="ecommerce">E-Commerce</option>
+                    <option value="blog">Content / Blog</option>
+                    <option value="minimal">Minimalist</option>
+                  </select>
                   <button type="submit" className="bg-[#2266ec] hover:bg-[#1d57cc] text-white px-6 py-2 rounded-md text-[13px] font-medium flex items-center gap-2 transition-colors">
                     <Plus className="w-4 h-4" /> Add Project
                   </button>

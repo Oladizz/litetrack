@@ -75,6 +75,27 @@ export function UniversalAgentStudio() {
       skills: [],
       tools: [],
       performance: { tasksCompleted: 89, successRate: 96.5, avgExecutionTimeMs: 510, tokenCostUsd: 12.10, userRating: 4.7 }
+    },
+    {
+      id: 'a_ecommerce',
+      name: 'Oladizz AI Agent',
+      role: 'Store Manager',
+      avatar: '🛍️',
+      status: 'running',
+      autonomyLevel: 'operator',
+      model: 'gemini-1.5-flash',
+      provider: 'Google AI',
+      version: '1.0.0',
+      systemPrompt: 'You are an AI Admin Assistant for Oladizz store. You have direct access to the store\'s entire live database. You can analyze data, write product descriptions, and create products using tools.',
+      capabilities: [
+        { name: 'Can Read Store Data', allowed: true },
+        { name: 'Can Modify Products', allowed: true },
+        { name: 'Can Delete Data Records', allowed: false },
+        { name: 'Can Delegate to Swarms', allowed: false }
+      ],
+      skills: [],
+      tools: [{ name: 'create_product', type: 'function' }],
+      performance: { tasksCompleted: 12, successRate: 100, avgExecutionTimeMs: 820, tokenCostUsd: 0.45, userRating: 5.0 }
     }
   ]);
 
