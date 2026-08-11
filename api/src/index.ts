@@ -186,7 +186,7 @@ app.get('/api/finances/:siteId', async (c) => {
 });
 
 // --- Firebase Admin Proxy Routes for Admin OS ---
-import { getSiteCollection, getSiteAuthUsers } from './firebase-proxy';
+import { getSiteCollection, getSiteAuthUsers, createSiteDocument, updateSiteDocument, deleteSiteDocument } from './firebase-proxy';
 
 app.get('/api/admin/firebase/:siteId/auth', async (c) => {
   try {
@@ -210,5 +210,49 @@ app.get('/api/admin/firebase/:siteId/firestore/:collection', async (c) => {
   } catch (error: any) {
     console.error(`Error fetching Firestore ${c.req.param('collection')} for site ${c.req.param('siteId')}:`, error);
     return c.json({ error: error.message || 'Failed to fetch Firestore collection' }, 500);
+  }
+});
+
+app.post('/api/admin/firebase/:siteId/firestore/:collection', async (c) => {
+  try {
+    const siteId = c.req.param('siteId');
+    const collection = c.req.param('collection');
+    const body = await c.req.json();
+    const docId = body.id; // optional document ID
+    
+    const result = await createSiteDocument(siteId, collection, body, docId);
+    return c.json(result);
+  } catch (error: any) {
+    console.error(`Error creating Firestore doc in ${c.req.param('collection')} for site ${c.req.param('siteId')}:`, error);
+    return c.json({ error: error.message || 'Failed to create document' }, 500);
+  }
+});
+
+app.put('/api/admin/firebase/:siteId/firestore/:collection/:docId', async (c) => {
+  try {
+    const siteId = c.req.param('siteId');
+    const collection = c.req.param('collection');
+    const docId = c.req.param('docId');
+    const body = await c.req.json();
+    
+    const result = await updateSiteDocument(siteId, collection, docId, body);
+    return c.json(result);
+  } catch (error: any) {
+    console.error(`Error updating Firestore doc ${c.req.param('docId')} in ${c.req.param('collection')} for site ${c.req.param('siteId')}:`, error);
+    return c.json({ error: error.message || 'Failed to update document' }, 500);
+  }
+});
+
+app.delete('/api/admin/firebase/:siteId/firestore/:collection/:docId', async (c) => {
+  try {
+    const siteId = c.req.param('siteId');
+    const collection = c.req.param('collection');
+    const docId = c.req.param('docId');
+    
+    const result = await deleteSiteDocument(siteId, collection, docId);
+    return c.json(result);
+  } catch (error: any) {
+    console.error(`Error deleting Firestore doc ${c.req.param('docId')} in ${c.req.param('collection')} for site ${c.req.param('siteId')}:`, error);
+    return c.json({ error: error.message || 'Failed to delete document' }, 500);
   }
 });

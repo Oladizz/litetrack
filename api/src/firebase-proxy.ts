@@ -95,3 +95,65 @@ export async function getSiteAuthUsers(siteId: string, maxResults = 50) {
     customClaims: user.customClaims
   }));
 }
+
+/**
+ * Creates a document in a specific Firestore collection for a site.
+ */
+export async function createSiteDocument(siteId: string, collectionName: string, data: any, docId?: string) {
+  const app = await getFirebaseAppForSite(siteId);
+  if (!app) {
+    throw new Error('Firebase configuration not found or invalid for this site');
+  }
+
+  const db = getFirestore(app);
+  
+  if (data.id) {
+    delete data.id; // Prevent saving the id inside the document itself if it's there
+  }
+  
+  // Convert ISO date strings back to Timestamps if needed, or just let them be strings.
+  data.createdAt = new Date().toISOString();
+  
+  if (docId) {
+    await db.collection(collectionName).doc(docId).set(data);
+    return { id: docId, ...data };
+  } else {
+    const docRef = await db.collection(collectionName).add(data);
+    return { id: docRef.id, ...data };
+  }
+}
+
+/**
+ * Updates a document in a specific Firestore collection for a site.
+ */
+export async function updateSiteDocument(siteId: string, collectionName: string, docId: string, data: any) {
+  const app = await getFirebaseAppForSite(siteId);
+  if (!app) {
+    throw new Error('Firebase configuration not found or invalid for this site');
+  }
+
+  const db = getFirestore(app);
+  
+  if (data.id) {
+    delete data.id;
+  }
+  
+  data.updatedAt = new Date().toISOString();
+  
+  await db.collection(collectionName).doc(docId).update(data);
+  return { id: docId, ...data };
+}
+
+/**
+ * Deletes a document from a specific Firestore collection for a site.
+ */
+export async function deleteSiteDocument(siteId: string, collectionName: string, docId: string) {
+  const app = await getFirebaseAppForSite(siteId);
+  if (!app) {
+    throw new Error('Firebase configuration not found or invalid for this site');
+  }
+
+  const db = getFirestore(app);
+  await db.collection(collectionName).doc(docId).delete();
+  return { success: true, id: docId };
+}
