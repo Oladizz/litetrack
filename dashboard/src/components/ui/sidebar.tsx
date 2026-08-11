@@ -59,53 +59,16 @@ export function Sidebar() {
   return (
     <>
       <aside className="fixed top-0 left-0 z-40 flex h-screen w-64 flex-col border-r border-[#262626] bg-[#1a1a1a]">
-        {/* Header */}
-        <div className="flex items-center gap-2 p-3 mt-1 relative">
-          <div className="w-7 h-7 bg-[#2266ec] rounded flex items-center justify-center shrink-0 shadow-lg">
-            <span className="text-white font-bold text-sm">O!</span>
+        {/* GLOBAL ZONE */}
+        <div className="p-3 border-b border-[#262626] space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 bg-[#2266ec] rounded flex items-center justify-center shrink-0 shadow-lg">
+              <span className="text-white font-bold text-sm">O!</span>
+            </div>
+            <span className="text-white font-bold tracking-wide">Admin OS</span>
           </div>
-          <div className="relative flex-1">
-            <button 
-              onClick={() => setProjectMenuOpen(!projectMenuOpen)} 
-              className="w-full flex items-center justify-between text-[13px] font-semibold hover:bg-[#262626] px-2 py-1.5 rounded transition-colors"
-            >
-              <span className="truncate text-white">{state.projectName || 'Select Project'}</span>
-              <ChevronDown className="w-3.5 h-3.5 text-[#a6a6a6]" />
-            </button>
-
-            {projectMenuOpen && (
-              <div className="absolute top-full mt-1 left-0 w-full bg-[#1a1a1a] border border-[#262626] rounded-md shadow-2xl p-1 z-50">
-                <div className="text-[10px] font-bold text-[#656565] uppercase px-2 py-1 tracking-wider">Switch Project</div>
-                {sites.map((s: any) => (
-                  <button
-                    key={s.site_id}
-                    onClick={() => {
-                      setProject(s.site_id, s.domain);
-                      setProjectMenuOpen(false);
-                    }}
-                    className={`w-full text-left px-2 py-1.5 text-[12px] rounded transition-colors truncate block ${
-                      state.project === s.site_id ? 'text-[#2266ec] bg-[#2266ec]/10 font-semibold' : 'text-white hover:bg-[#262626]'
-                    }`}
-                  >
-                    {s.domain}
-                  </button>
-                ))}
-                <div className="border-t border-[#262626] mt-1 pt-1">
-                  <Link
-                    href="/settings"
-                    onClick={() => setProjectMenuOpen(false)}
-                    className="w-full flex items-center gap-1.5 px-2 py-1.5 text-[12px] text-[#2266ec] hover:text-white hover:bg-[#262626] rounded transition-colors"
-                  >
-                    + Add / Manage Projects
-                  </Link>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Global AI Command / Search trigger */}
-        <div className="px-3 mb-2">
+          
+          {/* Global AI Command / Search trigger */}
           <button 
             onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
             className="w-full flex items-center gap-2 bg-[#262626]/50 border border-[#262626] rounded-md px-2 py-1.5 hover:border-[#404040] transition-colors text-left"
@@ -115,94 +78,112 @@ export function Sidebar() {
             <span className="text-[10px] text-[#656565] border border-[#262626] bg-[#1a1a1a] rounded px-1 tracking-widest">⌘K</span>
           </button>
         </div>
-        
+
         <div className="flex-1 overflow-auto px-2 mt-2 space-y-0.5 hide-scrollbar">
-          {/* Workspace Engine */}
-          <Link 
-            href="/workspace" 
-            className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${
-              isActive('/workspace') ? 'bg-[#2266ec]/20 text-[#2266ec] border border-[#2266ec]/30' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'
-            }`}
-          >
-            <Layers className="w-4 h-4" /> Workspace Engine
-          </Link>
-
-          {/* Core */}
-          <Link 
-            href="/" 
-            className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${
-              isActive('/') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'
-            }`}
-          >
-            <Home className="w-4 h-4" /> Overview
-          </Link>
           
-          <div className="text-[10px] font-bold text-[#656565] mt-6 mb-2 px-2 uppercase tracking-widest">Admin OS Tools</div>
+          <div className="text-[10px] font-bold text-[#656565] mt-2 mb-2 px-2 uppercase tracking-widest">Global</div>
           
-          <Link href="/data-manager" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/data-manager') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
-            <Database className="w-4 h-4" /> Data Manager
+          <Link href="/" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+            <Home className="w-4 h-4" /> System Overview
           </Link>
-          
-          <Link href="/dashboard-builder" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/dashboard-builder') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
-            <BarChart3 className="w-4 h-4" /> Dashboard Builder
-          </Link>
-
           <Link href="/command-center" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/command-center') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
             <Terminal className="w-4 h-4" /> Operating Console
           </Link>
-
-          <Link href="/ioac" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/ioac') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
-            <KeyRound className="w-4 h-4" /> Identity & Access
-          </Link>
-
-          <Link href="/agent-studio" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/agent-studio') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
-            <Bot className="w-4 h-4" /> AI Agent Studio
-          </Link>
-
-          <Link href="/resource-manager" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/resource-manager') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
-            <Package className="w-4 h-4" /> Resource Manager
-          </Link>
-
-          <Link href="/observability" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/observability') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
-            <Eye className="w-4 h-4" /> Observability
-          </Link>
-
-          <Link href="/platform-studio" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/platform-studio') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
-            <Wrench className="w-4 h-4" /> Platform Studio
-          </Link>
-
-          <Link href="/collaboration" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/collaboration') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
-            <Handshake className="w-4 h-4" /> Collaboration Hub
-          </Link>
-
-          <Link href="/enterprise-control" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/enterprise-control') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
-            <Crown className="w-4 h-4" /> Enterprise Control
-          </Link>
-
-          <div className="text-[10px] font-bold text-[#656565] mt-6 mb-2 px-2 uppercase tracking-widest">Legacy</div>
           
-          <Link href="/dashboards" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/dashboards') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
-            <Activity className="w-4 h-4" /> Analytics
-          </Link>
+          {/* APPLICATION SELECTOR */}
+          <div className="mt-4 px-2">
+            <div className="relative">
+              <button 
+                onClick={() => setProjectMenuOpen(!projectMenuOpen)} 
+                className="w-full flex items-center justify-between text-[13px] font-semibold bg-[#2266ec]/10 border border-[#2266ec]/20 text-[#2266ec] px-2 py-1.5 rounded transition-colors"
+              >
+                <span className="truncate flex items-center gap-2"><Package className="w-4 h-4"/> {state.projectName || 'Select Application'}</span>
+                <ChevronDown className="w-3.5 h-3.5" />
+              </button>
 
-          <Link href="/finances" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/finances') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
-            <ShoppingCart className="w-4 h-4" /> Commerce
-          </Link>
+              {projectMenuOpen && (
+                <div className="absolute top-full mt-1 left-0 w-full bg-[#1a1a1a] border border-[#262626] rounded-md shadow-2xl p-1 z-50">
+                  <div className="text-[10px] font-bold text-[#656565] uppercase px-2 py-1 tracking-wider">Your Applications</div>
+                  {sites.map((s: any) => (
+                    <button
+                      key={s.site_id}
+                      onClick={() => {
+                        setProject(s.site_id, s.domain);
+                        setProjectMenuOpen(false);
+                      }}
+                      className={`w-full text-left px-2 py-1.5 text-[12px] rounded transition-colors truncate block ${
+                        state.project === s.site_id ? 'text-[#2266ec] bg-[#2266ec]/10 font-semibold' : 'text-white hover:bg-[#262626]'
+                      }`}
+                    >
+                      {s.domain}
+                    </button>
+                  ))}
+                  <div className="border-t border-[#262626] mt-1 pt-1">
+                    <Link
+                      href="/settings"
+                      onClick={() => setProjectMenuOpen(false)}
+                      className="w-full flex items-center gap-1.5 px-2 py-1.5 text-[12px] text-[#2266ec] hover:text-white hover:bg-[#262626] rounded transition-colors"
+                    >
+                      + Add Application
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
 
-          <Link href="/users" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/users') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
-            <Users className="w-4 h-4" /> Users
-          </Link>
+          {/* WORKSPACE ZONE (Contextual to selected app) */}
+          {state.project && state.project !== 'Workspace Admin' && (
+            <>
+              <div className="text-[10px] font-bold text-[#656565] mt-6 mb-2 px-2 uppercase tracking-widest truncate">Workspace: {state.projectName}</div>
+              
+              <Link href="/dashboards" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/dashboards') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+                <BarChart3 className="w-4 h-4" /> Analytics
+              </Link>
+              <Link href="/data-manager/users" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/data-manager/users') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+                <Users className="w-4 h-4" /> Users
+              </Link>
+              <Link href="/data-manager/products" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/data-manager/products') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+                <Database className="w-4 h-4" /> Data & Collections
+              </Link>
+              <Link href="/data-manager/orders" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/data-manager/orders') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+                <ShoppingCart className="w-4 h-4" /> Transactions
+              </Link>
+              <Link href="/observability" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/observability') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+                <Activity className="w-4 h-4" /> Events & Logs
+              </Link>
+              <Link href="/agent-studio" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/agent-studio') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+                <Bot className="w-4 h-4" /> AI Operations
 
-          <div className="text-[10px] font-bold text-[#656565] mt-6 mb-2 px-2 uppercase tracking-widest">System</div>
+              <Link href="/data-manager/audit" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/data-manager/audit') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+                <Terminal className="w-4 h-4" /> Operations (Logs)
+              </Link>
+            </>
+          ) : (
+            <div className="mt-6 px-4 text-center">
+              <div className="text-[11px] text-[#656565] border border-[#262626] border-dashed rounded-lg p-4 bg-[#1a1a1a]/50">
+                Select an application from the top dropdown to view its workspace.
+              </div>
+            </div>
+          )}
 
-          <Link 
-            href="/settings" 
-            className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${
-              isActive('/settings') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'
-            }`}
-          >
+          {/* ======================================= */}
+          {/* 3. ADMIN CONTEXT */}
+          {/* ======================================= */}
+          <div className="text-[10px] font-bold text-[#656565] mt-6 mb-2 px-2 uppercase tracking-widest">Admin</div>
+
+          <Link href="/settings" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/settings') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
             <Settings className="w-4 h-4" /> Settings
           </Link>
+          
+          <Link href="/ioac" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/ioac') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+            <KeyRound className="w-4 h-4" /> Permissions
+          </Link>
+          
+          <Link href="/agent-studio" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/agent-studio') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+            <Bot className="w-4 h-4" /> AI Layer
+          </Link>
+
         </div>
         
         <div className="p-3 border-t border-[#262626]">
