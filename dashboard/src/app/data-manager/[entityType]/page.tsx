@@ -6,13 +6,17 @@ import { UniversalDataManager } from '@/components/data-manager';
 import { UniversalEntity, ColumnDef } from '@/components/data-manager/types';
 import { Loader2 } from 'lucide-react';
 import { useWorkspace } from '@/components/ui/workspace-context';
-import { OladizzSchemas } from '@/lib/schema-registry';
+import { DefaultProjectConfig, TemplateLibrary } from '@/lib/template-engine';
 
 export default function DynamicDataManagerPage({ params }: { params: { entityType: string } }) {
   const { state } = useWorkspace();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [entity, setEntity] = useState<UniversalEntity | null>(null);
+
+  // 1. PROJECT CONFIG: Find the configuration for this page ID (e.g. 'products')
+  const pageId = params.entityType;
+  const pageConfig = DefaultProjectConfig.pages.find(p => p.id === pageId);
 
   useEffect(() => {
     const fetchDynamicData = async () => {
@@ -24,8 +28,9 @@ export default function DynamicDataManagerPage({ params }: { params: { entityTyp
         const token = localStorage.getItem('litetrack_token');
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://litetrack-api-916484331446.us-central1.run.app';
         
-        // Fetch dynamically from Litetrack API using the connected Firebase Admin
-        const collectionName = OladizzSchemas[params.entityType]?.collectionName || params.entityType;
+        // If a config exists, use it. If not, we will attempt to dynamically infer it.
+        const collectionName = pageConfig?.config.collectionName || pageId;
+        
         const res = await fetch(`${apiUrl}/api/admin/firebase/${state.project}/firestore/${collectionName}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -37,11 +42,14 @@ export default function DynamicDataManagerPage({ params }: { params: { entityTyp
         
         const { data } = await res.json();
         
-        // Use predefined schema for nice UI, or auto-generate dynamic schema from the first document!
-        let schema = OladizzSchemas[params.entityType];
+        // 2. TEMPLATES: Check which template this page uses
+        const template = pageConfig ? TemplateLibrary[pageConfig.templateId] : TemplateLibrary['resource_manager'];
         
-        if (!schema) {
-          const dynamicColumns: ColumnDef[] = [{ id: 'id', label: 'ID', type: 'link', sortable: true }];
+        // If there's no project config for this page, dynamically generate the schema (Tool config)
+        let dynamicColumns: ColumnDef[] = pageConfig?.config.columns || [];
+        
+        if (!pageConfig || !pageConfig.config.columns) {
+          dynamicColumns = [{ id: 'id', label: 'ID', type: 'link', sortable: true }];
           
           if (data.length > 0) {
             Object.keys(data[0]).forEach(key => {
@@ -55,33 +63,28 @@ export default function DynamicDataManagerPage({ params }: { params: { entityTyp
               }
             });
           }
-          
-          schema = {
-            title: params.entityType.charAt(0).toUpperCase() + params.entityType.slice(1),
-            description: `Dynamic collection: ${collectionName}`,
-            collectionName: collectionName,
-            columns: dynamicColumns
-          };
         }
         
-        // Map data to Litetrack's UniversalEntity using the dynamic schema
+        const pageTitle = pageConfig?.title || (pageId.charAt(0).toUpperCase() + pageId.slice(1));
+        const pageDescription = pageConfig?.description || `Managing ${collectionName} via ${template.name} template`;
+        
+        // 3. TOOLS: Render the UniversalDataManager Tool with the configured layout
         const mappedEntity: UniversalEntity = {
-          id: `dynamic_${params.entityType}`,
-          title: schema.title,
-          description: schema.description,
+          id: `dynamic_${pageId}`,
+          title: pageTitle,
+          description: pageDescription,
           totalCount: data.length,
           lastUpdated: 'Just now',
           synced: true,
           breadcrumbs: [
             { label: 'Admin OS' },
-            { label: 'Data Manager' },
-            { label: schema.title }
+            { label: template.name }, // The template layout being used
+            { label: pageTitle }
           ],
-          columns: schema.columns,
-          // Map row fields dynamically based on column IDs
+          columns: dynamicColumns,
           rows: data.map((p: any) => {
             const row: Record<string, any> = { id: p.id };
-            schema.columns.forEach(col => {
+            dynamicColumns.forEach(col => {
               if (col.id !== 'actions') {
                 row[col.id] = p[col.id] !== undefined ? p[col.id] : null;
               }
@@ -99,7 +102,7 @@ export default function DynamicDataManagerPage({ params }: { params: { entityTyp
     };
 
     fetchDynamicData();
-  }, [params.entityType, state.project]);
+  }, [pageId, state.project, pageConfig]);
 
   return (
     <div className="min-h-screen font-sans flex text-[#fafafa] bg-[#121212]">
@@ -109,11 +112,11 @@ export default function DynamicDataManagerPage({ params }: { params: { entityTyp
           {loading ? (
             <div className="flex flex-col items-center justify-center h-[60vh] space-y-4">
               <Loader2 className="w-8 h-8 text-[#2266ec] animate-spin" />
-              <div className="text-sm text-[#a6a6a6]">Synchronizing Data...</div>
+              <div className="text-sm text-[#a6a6a6]">Rendering Template...</div>
             </div>
           ) : error ? (
             <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6 text-center space-y-4">
-              <div className="text-red-400 font-semibold text-lg">Failed to sync data</div>
+              <div className="text-red-400 font-semibold text-lg">Failed to load {pageId}</div>
               <div className="text-sm text-red-400/80">{error}</div>
             </div>
           ) : entity ? (
