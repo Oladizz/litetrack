@@ -1,5 +1,6 @@
 import { CommandItem, SearchProvider } from './types';
 import { toast } from '@/components/ui/toast';
+import { EntityGraph, EntityDefinition } from '@/lib/entity-graph';
 
 class PluginSearchRegistry {
   private providers: SearchProvider[] = [];
@@ -15,6 +16,11 @@ class PluginSearchRegistry {
   public searchAll(query: string, userRole: string = 'admin'): CommandItem[] {
     let results: CommandItem[] = [];
 
+    // Also include a global command parser (e.g., "> Suspend User")
+    if (query.startsWith('>')) {
+      return this.parseActionCommand(query);
+    }
+
     for (const provider of this.providers) {
       const providerResults = provider.search(query, userRole);
       // Filter out unauthorized commands by RBAC
@@ -28,83 +34,99 @@ class PluginSearchRegistry {
 
     return results;
   }
+
+  private parseActionCommand(query: string): CommandItem[] {
+    const actionQuery = query.substring(1).trim().toLowerCase();
+    const results: CommandItem[] = [];
+
+    // Loop through the Entity Graph to find matching actions
+    Object.values(EntityGraph).forEach((entity: EntityDefinition) => {
+      entity.actions.forEach(action => {
+        const fullActionName = `${action} ${entity.label}`.toLowerCase();
+        if (fullActionName.includes(actionQuery) || action.toLowerCase().includes(actionQuery)) {
+          results.push({
+            id: `action_${entity.type}_${action.replace(/\s+/g, '_')}`,
+            title: `${action} ${entity.label}`,
+            subtitle: `Global OS Action on ${entity.label}`,
+            category: 'Action',
+            icon: '⚡',
+            perform: () => toast(`Executing: ${action} ${entity.label}`, { type: 'success' })
+          });
+        }
+      });
+    });
+
+    return results;
+  }
 }
 
 export const pluginRegistry = new PluginSearchRegistry();
 
-// REGISTER DEFAULT ENTITY SEARCH PROVIDERS
-pluginRegistry.registerSearch({
-  id: 'users_provider',
-  name: 'Users Engine',
-  entityName: 'Users',
-  commands: [
-    {
-      id: 'cmd_create_user',
-      title: 'Create New User Account',
-      category: 'Action',
-      icon: '👤',
-      perform: () => toast('User creation modal opened', { type: 'info' })
-    }
-  ],
-  search: (query: string) => {
-    const mockUsers = [
-      { id: 'u1', name: 'John Doe', email: 'john@gmail.com', role: 'Admin', status: 'active', country: 'Nigeria' },
-      { id: 'u2', name: 'Sarah Connor', email: 'sarah@cyberdyne.com', role: 'Editor', status: 'pending', country: 'United States' },
-      { id: 'u3', name: 'Rabiu Oladizz', email: 'oladizz.dev@gmail.com', role: 'Super Admin', status: 'active', country: 'Nigeria' }
-    ];
+// -------------------------------------------------------------
+// DYNAMICALLY REGISTER PROVIDERS BASED ON THE ENTITY GRAPH
+// -------------------------------------------------------------
 
-    const q = query.toLowerCase();
-    return mockUsers
-      .filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.role.toLowerCase().includes(q))
-      .map(u => ({
-        id: `user_${u.id}`,
-        title: u.name,
-        subtitle: `${u.email} · ${u.country}`,
-        category: 'Entity',
-        icon: '👤',
-        status: u.status,
-        badge: u.role,
-        metadata: u,
-        perform: () => toast(`Viewing user ${u.name}`, { type: 'info' }),
-        quickActions: [
-          { label: 'View Profile', action: () => toast(`Opened ${u.name} Profile`, { type: 'info' }) },
-          { label: 'Copy Email', action: () => { navigator.clipboard.writeText(u.email); toast(`Copied ${u.email}`, { type: 'success' }); } }
-        ]
-      }));
-  }
+Object.values(EntityGraph).forEach((entity: EntityDefinition) => {
+  pluginRegistry.registerSearch({
+    id: `${entity.type}_provider`.toLowerCase(),
+    name: `${entity.label} Engine`,
+    entityName: entity.label,
+    commands: entity.actions.map(action => ({
+      id: `cmd_${entity.type}_${action.replace(/\s+/g, '_')}`.toLowerCase(),
+      title: `${action} ${entity.label}`,
+      category: 'Action',
+      icon: '⚡',
+      perform: () => toast(`Action Triggered: ${action} ${entity.label}`, { type: 'info' })
+    })),
+    search: (query: string) => {
+      const q = query.toLowerCase();
+      // Skip if query is empty unless it's a global search
+      if (!q && query !== '') return [];
+
+      // Simulated Data for demonstration purposes based on the entity type
+      const mockData: any[] = [];
+      
+      if (entity.type === 'User') {
+        mockData.push(
+          { id: 'u1', label: 'John Doe', metadata: 'john@gmail.com · Nigeria', status: 'active' },
+          { id: 'u2', label: 'Sarah Connor', metadata: 'sarah@skynet.com · USA', status: 'pending' },
+          { id: 'u3', label: 'Rabiu Oladizz', metadata: 'Super Admin · Nigeria', status: 'active' }
+        );
+      } else if (entity.type === 'Transaction') {
+        mockData.push(
+          { id: 'tx1', label: 'TX-9481', metadata: '$1,450 · John Doe', status: 'completed' },
+          { id: 'tx2', label: 'TX-8392', metadata: '$3,800 · Sarah Connor', status: 'pending' }
+        );
+      } else if (entity.type === 'Application') {
+        mockData.push(
+          { id: 'app1', label: 'Oladizz Store', metadata: 'Production · e-commerce', status: 'active' },
+          { id: 'app2', label: 'LiteTrack Analytics', metadata: 'Internal · dashboard', status: 'active' }
+        );
+      } else if (entity.type === 'Event') {
+         mockData.push(
+          { id: 'evt1', label: 'user.login', metadata: 'John Doe · 2 mins ago', status: 'success' },
+          { id: 'evt2', label: 'payment.failed', metadata: 'TX-8392 · 1 hour ago', status: 'error' }
+        );
+      }
+
+      // Filter and map to CommandItem format
+      return mockData
+        .filter(d => d.label.toLowerCase().includes(q) || d.metadata.toLowerCase().includes(q))
+        .map(d => ({
+          id: d.id,
+          title: d.label,
+          subtitle: d.metadata,
+          category: 'Entity',
+          icon: entity.icon === 'Users' ? '👤' : entity.icon === 'ShoppingCart' ? '🛒' : entity.icon === 'Package' ? '📦' : '📄',
+          status: d.status,
+          metadata: d,
+          perform: () => toast(`Opening ${entity.label}: ${d.label}`, { type: 'info' }),
+          quickActions: entity.actions.map(action => ({
+            label: action,
+            action: () => toast(`${action} executed on ${d.label}`, { type: 'success' })
+          }))
+        }));
+    }
+  });
 });
 
-pluginRegistry.registerSearch({
-  id: 'orders_provider',
-  name: 'Orders & Sales Engine',
-  entityName: 'Orders',
-  commands: [
-    {
-      id: 'cmd_export_orders',
-      title: 'Export Orders to CSV',
-      category: 'Action',
-      icon: '📊',
-      perform: () => toast('Orders exported to CSV', { type: 'success' })
-    }
-  ],
-  search: (query: string) => {
-    const mockOrders = [
-      { id: 'ord_9481', title: 'Order #ORD-9481', amount: '$1,450', status: 'completed', date: 'Today' },
-      { id: 'ord_8392', title: 'Order #ORD-8392', amount: '$3,800', status: 'pending', date: 'Yesterday' }
-    ];
-
-    const q = query.toLowerCase();
-    return mockOrders
-      .filter(o => o.title.toLowerCase().includes(q) || o.amount.includes(q))
-      .map(o => ({
-        id: o.id,
-        title: o.title,
-        subtitle: `Total Amount: ${o.amount} · Created ${o.date}`,
-        category: 'Entity',
-        icon: '🛒',
-        status: o.status,
-        metadata: o,
-        perform: () => toast(`Viewing ${o.title}`, { type: 'info' })
-      }));
-  }
-});
