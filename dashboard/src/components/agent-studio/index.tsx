@@ -94,7 +94,7 @@ export function UniversalAgentStudio() {
         { name: 'Can Delegate to Swarms', allowed: false }
       ],
       skills: [],
-      tools: [{ name: 'create_product' }],
+      tools: [{ id: 'tool-1', name: 'create_product', description: 'Creates a new product', enabled: true }],
       performance: { tasksCompleted: 12, successRate: 100, avgExecutionTimeMs: 820, tokenCostUsd: 0.45, userRating: 5.0 }
     }
   ]);
