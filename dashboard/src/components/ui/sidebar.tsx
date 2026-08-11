@@ -133,7 +133,7 @@ export function Sidebar() {
           </div>
 
           {/* WORKSPACE ZONE (Contextual to selected app) */}
-          {state.project && state.project !== 'Workspace Admin' && (
+          {state.project && state.project !== 'Workspace Admin' ? (
             <>
               <div className="text-[10px] font-bold text-[#656565] mt-6 mb-2 px-2 uppercase tracking-widest truncate">Workspace: {state.projectName}</div>
               
