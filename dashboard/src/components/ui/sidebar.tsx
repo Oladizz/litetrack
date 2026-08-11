@@ -154,6 +154,7 @@ export function Sidebar() {
               </Link>
               <Link href="/agent-studio" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/agent-studio') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
                 <Bot className="w-4 h-4" /> AI Operations
+              </Link>
 
               <Link href="/data-manager/audit" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/data-manager/audit') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
                 <Terminal className="w-4 h-4" /> Operations (Logs)
