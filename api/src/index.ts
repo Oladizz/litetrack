@@ -14,6 +14,22 @@ const app = new Hono<{ Variables: { user: any } }>();
 
 app.use('*', cors());
 
+import { sendDailySummary, sendHourlySummary } from './telegram';
+
+app.get('/api/cron/telegram/daily', async (c) => {
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!chatId) return c.json({ error: 'TELEGRAM_CHAT_ID not configured' }, 500);
+  await sendDailySummary(chatId);
+  return c.json({ success: true });
+});
+
+app.get('/api/cron/telegram/hourly', async (c) => {
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!chatId) return c.json({ error: 'TELEGRAM_CHAT_ID not configured' }, 500);
+  await sendHourlySummary(chatId);
+  return c.json({ success: true });
+});
+
 // Middleware to verify Firebase Auth Token
 app.use('/api/*', async (c, next) => {
   const authHeader = c.req.header('Authorization');
