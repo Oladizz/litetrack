@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Brush, ReferenceArea, ReferenceDot, ReferenceLine } from 'recharts';
 import { 
@@ -282,9 +282,9 @@ const MetricCard = ({ kpi, isActive, onClick, timeseries = [], globalHoverIndex,
         </div>
         <div className="text-xl font-bold text-white mt-1 tabular-nums tracking-tight">
           {typeof displayValue === 'string' && displayValue.includes('%') ? (
-            <><AnimatedNumber value={parseFloat(displayValue)} duration={800} formatter={v => v.toFixed(1)} />%</>
+            <React.Fragment><AnimatedNumber value={parseFloat(displayValue)} duration={800} formatter={v => v.toFixed(1)} />%</React.Fragment>
           ) : typeof displayValue === 'string' && displayValue.includes('s') ? (
-            <><AnimatedNumber value={parseFloat(displayValue)} duration={800} formatter={v => v.toFixed(0)} />s</>
+            <React.Fragment><AnimatedNumber value={parseFloat(displayValue)} duration={800} formatter={v => v.toFixed(0)} />s</React.Fragment>
           ) : typeof displayValue === 'string' ? (
             displayValue
           ) : (
@@ -655,7 +655,7 @@ export default function Dashboard() {
               </div>
             </div>
           ) : (
-            <>
+            <React.Fragment>
 
           
           {/* Active Filters */}
@@ -1052,7 +1052,7 @@ export default function Dashboard() {
             </div>
           )}
 
-            </>
+            </React.Fragment>
           )}
         </div>
         <SlidePanel
