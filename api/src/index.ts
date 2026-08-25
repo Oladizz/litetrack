@@ -189,6 +189,22 @@ app.post('/api/stats/:siteId/ai', async (c) => {
   }
 });
 
+
+app.get('/tracker.js', async (c) => {
+  const fs = require('fs');
+  const path = require('path');
+  try {
+    const trackerPath = path.join(__dirname, '../public/tracker.js');
+    const trackerCode = fs.readFileSync(trackerPath, 'utf8');
+    return c.text(trackerCode, 200, {
+      'Content-Type': 'application/javascript',
+      'Cache-Control': 'public, max-age=3600'
+    });
+  } catch (e) {
+    return c.text('Not found', 404);
+  }
+});
+
 const port = process.env.PORT ? parseInt(process.env.PORT) : 8080;
 console.log(`API running on port ${port}`);
 

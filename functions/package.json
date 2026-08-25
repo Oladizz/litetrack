@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "npx @google-cloud/functions-framework --target=ingestEvent"
   },
   "dependencies": {
     "@google-cloud/bigquery": "^7.3.0",
