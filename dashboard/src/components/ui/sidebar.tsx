@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { 
   Home, Activity, Users, ShoppingCart, Zap, Shield, Settings, 
   ChevronDown, Search, Sparkles, Database, BarChart3, Terminal,
-  KeyRound, Bot, Package, Eye, Wrench, Handshake, Crown, Layers
+  KeyRound, Bot, Package, Eye, Wrench, Handshake, Crown, Layers, CreditCard, FileText, Briefcase, MessageSquare
 } from 'lucide-react';
 import { useWorkspace } from '@/components/ui/workspace-context';
 
@@ -51,10 +51,15 @@ export function Sidebar() {
     }
   }, [state.project, setProject, apiUrl]);
 
+
   const isActive = (path: string) => {
     if (path === '/' && pathname !== '/') return false;
     return pathname.startsWith(path);
   };
+
+  const activeSite = sites.find(s => s.site_id === state.project);
+  const template = activeSite?.template || 'saas';
+
 
   return (
     <>
@@ -140,15 +145,57 @@ export function Sidebar() {
               <Link href="/dashboards" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/dashboards') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
                 <BarChart3 className="w-4 h-4" /> Analytics
               </Link>
-              <Link href="/data-manager/users" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/data-manager/users') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
-                <Users className="w-4 h-4" /> Users
-              </Link>
-              <Link href="/data-manager/products" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/data-manager/products') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
-                <Database className="w-4 h-4" /> Data & Collections
-              </Link>
-              <Link href="/data-manager/orders" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/data-manager/orders') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
-                <ShoppingCart className="w-4 h-4" /> Transactions
-              </Link>
+              
+              {template === 'saas' && (
+                <>
+                  <Link href="/data-manager/users" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/data-manager/users') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+                    <Users className="w-4 h-4" /> Users
+                  </Link>
+                  <Link href="/data-manager/subscriptions" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/data-manager/subscriptions') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+                    <CreditCard className="w-4 h-4" /> Subscriptions
+                  </Link>
+                </>
+              )}
+
+              {template === 'ecommerce' && (
+                <>
+                  <Link href="/data-manager/products" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/data-manager/products') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+                    <Database className="w-4 h-4" /> Inventory
+                  </Link>
+                  <Link href="/data-manager/orders" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/data-manager/orders') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+                    <ShoppingCart className="w-4 h-4" /> Transactions
+                  </Link>
+                  <Link href="/data-manager/customers" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/data-manager/customers') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+                    <Users className="w-4 h-4" /> Customers
+                  </Link>
+                </>
+              )}
+
+              {template === 'blog' && (
+                <>
+                  <Link href="/data-manager/posts" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/data-manager/posts') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+                    <FileText className="w-4 h-4" /> Posts
+                  </Link>
+                  <Link href="/data-manager/comments" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/data-manager/comments') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+                    <MessageSquare className="w-4 h-4" /> Comments
+                  </Link>
+                  <Link href="/data-manager/subscribers" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/data-manager/subscribers') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+                    <Users className="w-4 h-4" /> Subscribers
+                  </Link>
+                </>
+              )}
+
+              {template === 'portfolio' && (
+                <>
+                  <Link href="/data-manager/projects" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/data-manager/projects') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+                    <Briefcase className="w-4 h-4" /> Projects
+                  </Link>
+                  <Link href="/data-manager/messages" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/data-manager/messages') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+                    <MessageSquare className="w-4 h-4" /> Messages
+                  </Link>
+                </>
+              )}
+
               <Link href="/observability" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/observability') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
                 <Activity className="w-4 h-4" /> Events & Logs
               </Link>
