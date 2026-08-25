@@ -324,6 +324,8 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<string>('overview');
   const [stats, setStats] = useState<any>(null);
   const [liveVisitors, setLiveVisitors] = useState<number>(0);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [mapTooltip, setMapTooltip] = useState<{content: string, x: number, y: number} | null>(null);
   const [loading, setLoading] = useState(true);
   const [projectMenuOpen, setProjectMenuOpen] = useState(false);
   const [activeMetric, setActiveMetric] = useState('UNIQUE VISITORS');
@@ -395,11 +397,24 @@ export default function Dashboard() {
   }, [token, currentSite, period, filters]);
 
   const fetchLiveStats = async () => {
-    const data = await fetch(`${apiUrl}/api/stats/${currentSite}/live`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    }).then(r => r.json()).catch(() => null);
-    if (data && data.live_visitors !== undefined) {
-      setLiveVisitors(data.live_visitors);
+    try {
+      const res = await fetch(`${apiUrl}/api/stats/${currentSite}/live`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.live_visitors !== undefined) {
+          setLiveVisitors(data.live_visitors);
+          // If we successfully fetched and there are any events in our backend, it's connected.
+          setIsConnected(true);
+        } else {
+          setIsConnected(false);
+        }
+      } else {
+        setIsConnected(false);
+      }
+    } catch {
+      setIsConnected(false);
     }
   };
 
@@ -596,11 +611,20 @@ export default function Dashboard() {
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 px-3 py-1.5 bg-[#1a1a1a] border border-white/[0.05] rounded-full shadow-sm">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                {isConnected ? (
+                  <React.Fragment>
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                  </React.Fragment>
+                ) : (
+                  <React.Fragment>
+                    <span className="animate-pulse absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
+                  </React.Fragment>
+                )}
               </span>
-              <span className="text-[11px] font-semibold text-[#fafafa] tracking-wide">Live</span>
-              <span className="text-[10px] text-[#656565]">Updated 2 sec ago</span>
+              <span className="text-[11px] font-semibold text-[#fafafa] tracking-wide">{isConnected ? 'Connected' : 'Waiting...'}</span>
+              <span className="text-[10px] text-[#656565]">{isConnected ? 'Updates every 30s' : 'No data yet'}</span>
             </div>
             <button 
               onClick={() => setIsPrivacyOpen(true)}
