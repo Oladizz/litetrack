@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
-  Home, Activity, Users, ShoppingCart, Zap, Shield, Settings, 
+  Home, Activity, Users, ShoppingCart, Zap, Shield, Settings, Globe, 
   ChevronDown, Search, Sparkles, Database, BarChart3, Terminal,
   KeyRound, Bot, Package, Eye, Wrench, Handshake, Crown, Layers, CreditCard, FileText, Briefcase, MessageSquare
 } from 'lucide-react';
@@ -220,6 +220,10 @@ export function Sidebar() {
           {/* ======================================= */}
           <div className="text-[10px] font-bold text-[#656565] mt-6 mb-2 px-2 uppercase tracking-widest">Admin</div>
 
+          <Link href="/enterprise-control" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/enterprise-control') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+            <Globe className="w-4 h-4" /> Global Overview
+          </Link>
+          
           <Link href="/settings" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/settings') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
             <Settings className="w-4 h-4" /> Settings
           </Link>
