@@ -7,14 +7,15 @@ import { Loader2 } from 'lucide-react';
 import { useWorkspace } from '@/components/ui/workspace-context';
 import { DefaultProjectConfig, TemplateLibrary } from '@/lib/template-engine';
 
-export default function DynamicDataManagerPage({ params }: { params: { entityType: string } }) {
+export default function DynamicDataManagerPage({ params }: { params: Promise<{ entityType: string }> }) {
   const { state } = useWorkspace();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [entity, setEntity] = useState<UniversalEntity | null>(null);
 
   // 1. PROJECT CONFIG: Find the configuration for this page ID (e.g. 'products')
-  const pageId = params.entityType;
+  const { entityType } = React.use(params);
+  const pageId = entityType;
   const pageConfig = DefaultProjectConfig.pages.find(p => p.id === pageId);
 
   useEffect(() => {
@@ -109,7 +110,7 @@ export default function DynamicDataManagerPage({ params }: { params: { entityTyp
           {loading ? (
             <div className="flex flex-col items-center justify-center h-[60vh] space-y-4">
               <Loader2 className="w-8 h-8 text-[#2266ec] animate-spin" />
-              <div className="text-sm text-[#a6a6a6]">Rendering Template...</div>
+              <div className="text-sm text-[#a6a6a6]">Loading Live Data...</div>
             </div>
           ) : error ? (
             <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6 text-center space-y-4">
