@@ -3,7 +3,7 @@ import { serve } from '@hono/node-server';
 import { cors } from 'hono/cors';
 import { initializeApp, getApps } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
-import { getStats, getLiveVisitors, getActivityStream, getSites, addSite, deleteSite, updateSiteTemplate, updateSiteFeatures, updateSiteFirebaseConfig } from './stats';
+import { getStats, getCustomQuery, getLiveVisitors, getActivityStream, getSites, addSite, deleteSite, updateSiteTemplate, updateSiteFeatures, updateSiteFirebaseConfig } from './stats';
 
 // Initialize Firebase Admin (requires GOOGLE_APPLICATION_CREDENTIALS or initialized with service account)
 if (!getApps().length) {
@@ -126,6 +126,32 @@ app.get('/api/stats/:siteId/activity', async (c) => {
     return c.json({ error: 'Failed to fetch activity stream' }, 500);
   }
 });
+app.get('/api/stats/:siteId/custom', async (c) => {
+  try {
+    const siteId = c.req.param('siteId');
+    const metric = c.req.query('metric') || 'pageviews';
+    const dimension = c.req.query('dimension') || 'date';
+    const periodDays = parseInt(c.req.query('days') || '30');
+    const data = await getCustomQuery(siteId, metric, dimension, periodDays);
+    return c.json({ data });
+  } catch (error) {
+    return c.json({ error: 'Failed to fetch custom query' }, 500);
+  }
+});
+
+app.get('/api/stats/:siteId/custom', async (c) => {
+  try {
+    const siteId = c.req.param('siteId');
+    const metric = c.req.query('metric') || 'pageviews';
+    const dimension = c.req.query('dimension') || 'date';
+    const periodDays = parseInt(c.req.query('days') || '30');
+    const data = await getCustomQuery(siteId, metric, dimension, periodDays);
+    return c.json({ data });
+  } catch (error) {
+    return c.json({ error: 'Failed to fetch custom query' }, 500);
+  }
+});
+
 app.get('/api/stats/:siteId', async (c) => {
   try {
     const siteId = c.req.param('siteId');

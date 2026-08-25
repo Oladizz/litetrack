@@ -32,6 +32,8 @@ export default function CustomDashboardPage({ params }: { params: Promise<{ id: 
   const [dashboardNameInput, setDashboardNameInput] = useState("");
   const [reportNameInput, setReportNameInput] = useState("");
   const [reportType, setReportType] = useState<'area' | 'bar' | 'pie' | 'metric'>('area');
+  const [reportMetric, setReportMetric] = useState<string>('pageviews');
+  const [reportDimension, setReportDimension] = useState<string>('date');
 
   useEffect(() => {
     if (isLoaded && !dashboard) {
@@ -112,27 +114,13 @@ export default function CustomDashboardPage({ params }: { params: Promise<{ id: 
   const handleCreateReportConfirm = () => {
     if (!dashboard || !reportNameInput.trim()) return;
     
-    // Generate some mock data based on type
-    let data: any[] = [];
-    if (reportType === 'metric') {
-      data = [{ value: Math.floor(Math.random() * 10000) }];
-    } else if (reportType === 'pie') {
-      data = [{ name: 'A', value: 400 }, { name: 'B', value: 300 }, { name: 'C', value: 300 }];
-    } else {
-      data = [
-        { name: 'Mon', value: Math.random() * 100 },
-        { name: 'Tue', value: Math.random() * 100 },
-        { name: 'Wed', value: Math.random() * 100 },
-        { name: 'Thu', value: Math.random() * 100 },
-        { name: 'Fri', value: Math.random() * 100 },
-      ];
-    }
-
-    const newReport = {
+    const newReport: Report = {
       id: `r-${Date.now()}`,
       name: reportNameInput.trim(),
       chartType: reportType,
-      data,
+      metric: reportMetric,
+      dimension: reportType === 'metric' ? 'none' : reportDimension,
+      data: [],
       layout: { x: 0, y: 0, w: reportType === 'metric' ? 3 : 6, h: reportType === 'metric' ? 1 : 3 }
     };
     updateDashboard(dashboardId, {

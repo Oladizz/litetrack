@@ -6,6 +6,8 @@ export type Report = {
   id: string;
   name: string;
   chartType: 'area' | 'bar' | 'pie' | 'metric' | 'linear';
+  metric: string;
+  dimension: string;
   data: any[];
   layout?: { x: number; y: number; w: number; h: number };
 };
@@ -31,9 +33,9 @@ const DEFAULT_DASHBOARDS: Dashboard[] = [
     name: 'Marketing Dashboard',
     updatedAt: Date.now(),
     reports: [
-      { id: 'r1', name: 'Total Conversions', chartType: 'metric', data: [{ value: '1,204' }], layout: { x: 0, y: 0, w: 12, h: 1 } },
-      { id: 'r2', name: 'Conversions Over Time', chartType: 'area', data: defaultData, layout: { x: 0, y: 1, w: 8, h: 3 } },
-      { id: 'r3', name: 'Device Breakdown', chartType: 'pie', data: [{ name: 'Desktop', value: 400 }, { name: 'Mobile', value: 300 }], layout: { x: 8, y: 1, w: 4, h: 3 } },
+      { id: 'r1', name: 'Total Conversions', chartType: 'metric', metric: 'visitors', dimension: 'none', data: [{ value: '1,204' }], layout: { x: 0, y: 0, w: 12, h: 1 } },
+      { id: 'r2', name: 'Conversions Over Time', chartType: 'area', metric: 'pageviews', dimension: 'date', data: defaultData, layout: { x: 0, y: 1, w: 8, h: 3 } },
+      { id: 'r3', name: 'Device Breakdown', chartType: 'pie', metric: 'visitors', dimension: 'device', data: [{ name: 'Desktop', value: 400 }, { name: 'Mobile', value: 300 }], layout: { x: 8, y: 1, w: 4, h: 3 } },
     ]
   }
 ];

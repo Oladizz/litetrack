@@ -1,13 +1,44 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip as RechartsTooltip, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 import { Copy, Trash, MoreHorizontal, Maximize2, Download, RefreshCw } from 'lucide-react';
 import { toast } from '@/components/ui/toast';
+import { useWorkspace } from '@/components/ui/workspace-context';
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://litetrack-api-916484331446.us-central1.run.app';
+
 
 const COLORS = ['#2266ec', '#1a4bb3', '#11317a', '#3f7eee', '#5b94ff'];
 
 export function ReportItem({ report, onDelete, onDuplicate }: { report: any, onDelete?: (id: string) => void, onDuplicate?: (id: string) => void }) {
+    const { state } = useWorkspace();
+  const [data, setData] = useState<any[]>(report.data || []);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (report.metric) {
+      const fetchReportData = async () => {
+        setLoading(true);
+        try {
+          const token = localStorage.getItem('litetrack_token');
+          const res = await fetch(`${apiUrl}/api/stats/${state.project}/custom?metric=${report.metric}&dimension=${report.dimension}&days=30`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (res.ok) {
+            const json = await res.json();
+            setData(json.data || []);
+          }
+        } catch (e) {
+          console.error(e);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchReportData();
+    }
+  }, [report.metric, report.dimension, state.project]);
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [contextMenu, setContextMenu] = useState<{ x: number, y: number } | null>(null);
 
@@ -31,7 +62,7 @@ export function ReportItem({ report, onDelete, onDuplicate }: { report: any, onD
   }, [contextMenu]);
 
   const renderChart = () => {
-    if (!report.data || report.data.length === 0) {
+    if (!data || data.length === 0) {
       return <div className="h-full flex items-center justify-center text-[#656565] text-sm">No data</div>;
     }
 
@@ -43,7 +74,7 @@ export function ReportItem({ report, onDelete, onDuplicate }: { report: any, onD
               {report.name}
               <span className="text-green-400 font-medium tracking-normal text-[10px] bg-green-400/10 px-1.5 py-0.5 rounded-sm">↑ 18%</span>
             </div>
-            <div className="text-5xl font-semibold tracking-tight text-white">{report.data[0]?.value || 0}</div>
+            <div className="text-5xl font-semibold tracking-tight text-white">{((data[0]?.value || 0).toLocaleString() || 0).toLocaleString() || 0}</div>
             <div className="absolute bottom-0 right-0 left-0 h-1/2 bg-gradient-to-t from-[#2266ec]/10 to-transparent opacity-0 group-hover/metric:opacity-100 transition-opacity duration-500 pointer-events-none blur-xl"></div>
           </div>
         );
@@ -51,8 +82,8 @@ export function ReportItem({ report, onDelete, onDuplicate }: { report: any, onD
         return (
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <Pie data={report.data} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value" stroke="none">
-                {report.data.map((_: any, index: number) => (
+              <Pie data={data} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value" stroke="none">
+                {data.map((_: any, index: number) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
@@ -63,7 +94,7 @@ export function ReportItem({ report, onDelete, onDuplicate }: { report: any, onD
       case 'bar':
         return (
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={report.data}>
+            <BarChart data={data}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#262626" />
               <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#656565', fontSize: 11 }} />
               <YAxis axisLine={false} tickLine={false} tick={{ fill: '#656565', fontSize: 11 }} />
@@ -77,7 +108,7 @@ export function ReportItem({ report, onDelete, onDuplicate }: { report: any, onD
       default:
         return (
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={report.data}>
+            <AreaChart data={data}>
               <defs>
                 <linearGradient id={`colorVal-${report.id}`} x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#2266ec" stopOpacity={report.chartType === 'area' ? 0.3 : 0}/>

@@ -316,16 +316,16 @@ export function UniversalDataGrid({
                     isSelected ? 'bg-[#2266ec]/5' : 'hover:bg-[#1a1a1a]'
                   }`}
                 >
-                  {/* Subtle left accent on hover/select */}
-                  <div className={`absolute left-0 top-0 bottom-0 w-[2px] transition-colors duration-100 ${
-                    isSelected ? 'bg-[#2266ec]' : 'bg-transparent group-hover:bg-[#333]'
-                  }`} />
-
                   {/* Row Checkbox */}
                   <td 
-                    className="p-3 text-center z-10"
+                    className="p-3 text-center z-10 relative"
                     onClick={(e) => handleRowCheck(idx, row.id, e)}
                   >
+                    {/* Subtle left accent on hover/select */}
+                    <div className={`absolute left-0 top-0 bottom-0 w-[2px] transition-colors duration-100 ${
+                      isSelected ? 'bg-[#2266ec]' : 'bg-transparent group-hover:bg-[#333]'
+                    }`} />
+
                     <input
                       type="checkbox"
                       checked={isSelected}
