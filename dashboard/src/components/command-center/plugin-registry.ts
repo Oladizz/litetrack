@@ -4,9 +4,19 @@ import { EntityGraph, EntityDefinition } from '@/lib/entity-graph';
 
 class PluginSearchRegistry {
   private providers: SearchProvider[] = [];
+  // Store real dynamic data
+  private dataStore: Record<string, any[]> = {};
 
   public registerSearch(provider: SearchProvider) {
     this.providers.push(provider);
+  }
+  
+  public injectData(entityType: string, data: any[]) {
+    this.dataStore[entityType] = data;
+  }
+  
+  public getData(entityType: string): any[] {
+    return this.dataStore[entityType] || [];
   }
 
   public getProviders(): SearchProvider[] {
@@ -39,7 +49,6 @@ class PluginSearchRegistry {
     const actionQuery = query.substring(1).trim().toLowerCase();
     const results: CommandItem[] = [];
 
-    // Loop through the Entity Graph to find matching actions
     Object.values(EntityGraph).forEach((entity: EntityDefinition) => {
       entity.actions.forEach(action => {
         const fullActionName = `${action} ${entity.label}`.toLowerCase();
@@ -62,10 +71,6 @@ class PluginSearchRegistry {
 
 export const pluginRegistry = new PluginSearchRegistry();
 
-// -------------------------------------------------------------
-// DYNAMICALLY REGISTER PROVIDERS BASED ON THE ENTITY GRAPH
-// -------------------------------------------------------------
-
 Object.values(EntityGraph).forEach((entity: EntityDefinition) => {
   pluginRegistry.registerSearch({
     id: `${entity.type}_provider`.toLowerCase(),
@@ -80,47 +85,29 @@ Object.values(EntityGraph).forEach((entity: EntityDefinition) => {
     })),
     search: (query: string) => {
       const q = query.toLowerCase();
-      // Skip if query is empty unless it's a global search
       if (!q && query !== '') return [];
 
-      // Simulated Data for demonstration purposes based on the entity type
-      const mockData: any[] = [];
-      
-      if (entity.type === 'User') {
-        mockData.push(
-          { id: 'u1', label: 'John Doe', metadata: 'john@gmail.com · Nigeria', status: 'active' },
-          { id: 'u2', label: 'Sarah Connor', metadata: 'sarah@skynet.com · USA', status: 'pending' },
-          { id: 'u3', label: 'Rabiu Oladizz', metadata: 'Super Admin · Nigeria', status: 'active' }
-        );
-      } else if (entity.type === 'Transaction') {
-        mockData.push(
-          { id: 'tx1', label: 'TX-9481', metadata: '$1,450 · John Doe', status: 'completed' },
-          { id: 'tx2', label: 'TX-8392', metadata: '$3,800 · Sarah Connor', status: 'pending' }
-        );
-      } else if (entity.type === 'Application') {
-        mockData.push(
-          { id: 'app1', label: 'Oladizz Store', metadata: 'Production · e-commerce', status: 'active' },
-          { id: 'app2', label: 'LiteTrack Analytics', metadata: 'Internal · dashboard', status: 'active' }
-        );
-      } else if (entity.type === 'Event') {
-         mockData.push(
-          { id: 'evt1', label: 'user.login', metadata: 'John Doe · 2 mins ago', status: 'success' },
-          { id: 'evt2', label: 'payment.failed', metadata: 'TX-8392 · 1 hour ago', status: 'error' }
-        );
-      }
+      // Fetch real data injected into the registry
+      const realData = pluginRegistry.getData(entity.type);
 
-      // Filter and map to CommandItem format
-      return mockData
-        .filter(d => d.label.toLowerCase().includes(q) || d.metadata.toLowerCase().includes(q))
+      return realData
+        .filter(d => d.label.toLowerCase().includes(q) || (d.metadata && d.metadata.toLowerCase().includes(q)))
         .map(d => ({
           id: d.id,
           title: d.label,
-          subtitle: d.metadata,
+          subtitle: d.metadata || 'No details',
           category: 'Entity',
           icon: entity.icon === 'Users' ? '👤' : entity.icon === 'ShoppingCart' ? '🛒' : entity.icon === 'Package' ? '📦' : '📄',
-          status: d.status,
+          status: d.status || 'active',
           metadata: d,
-          perform: () => toast(`Opening ${entity.label}: ${d.label}`, { type: 'info' }),
+          perform: () => {
+             if (d.url) {
+                // If the data provides a URL, use standard navigation
+                window.location.href = d.url;
+             } else {
+                toast(`Opened ${entity.label}: ${d.label}`, { type: 'info' });
+             }
+          },
           quickActions: entity.actions.map(action => ({
             label: action,
             action: () => toast(`${action} executed on ${d.label}`, { type: 'success' })
@@ -129,4 +116,3 @@ Object.values(EntityGraph).forEach((entity: EntityDefinition) => {
     }
   });
 });
-
