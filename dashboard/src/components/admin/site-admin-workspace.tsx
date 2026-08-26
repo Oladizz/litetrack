@@ -6,6 +6,8 @@ import { useWorkspace } from '@/components/ui/workspace-context';
 import { UniversalDataManager } from '@/components/data-manager';
 import { UniversalEntity, ColumnDef } from '@/components/data-manager/types';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://litetrack-api-916484331446.us-central1.run.app';
+
 export function SiteAdminWorkspace() {
   const { state } = useWorkspace();
   const [collections, setCollections] = useState<string[]>([]);
@@ -20,16 +22,14 @@ export function SiteAdminWorkspace() {
     if (!state.project || state.project === 'Workspace Admin') return;
     
     const token = localStorage.getItem('litetrack_token');
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://litetrack-api-916484331446.us-central1.run.app';
     
     setLoading(true);
-    fetch(\`\${apiUrl}/api/admin/firebase/\${state.project}/collections\`, {
-      headers: { Authorization: \`Bearer \${token}\` }
+    fetch(`${API_URL}/api/admin/firebase/${state.project}/collections`, {
+      headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
       .then(data => {
         if (data.collections) {
-          // Always prepend 'users' since it comes from Auth if not purely Firestore
           const cols = data.collections.includes('users') ? data.collections : ['users', ...data.collections];
           setCollections(cols);
         } else if (data.error) {
@@ -49,14 +49,13 @@ export function SiteAdminWorkspace() {
     
     try {
       const token = localStorage.getItem('litetrack_token');
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://litetrack-api-916484331446.us-central1.run.app';
       
       const endpoint = collection === 'users' 
-        ? \`\${apiUrl}/api/admin/firebase/\${state.project}/auth\`
-        : \`\${apiUrl}/api/admin/firebase/\${state.project}/firestore/\${collection}\`;
+        ? `${API_URL}/api/admin/firebase/${state.project}/auth`
+        : `${API_URL}/api/admin/firebase/${state.project}/firestore/${collection}`;
         
       const res = await fetch(endpoint, {
-        headers: { Authorization: \`Bearer \${token}\` }
+        headers: { Authorization: `Bearer ${token}` }
       });
       
       const data = await res.json();
@@ -100,7 +99,6 @@ export function SiteAdminWorkspace() {
   }
 
   if (activeCollection) {
-    // Dynamically build columns based on the first document's keys
     let dynamicColumns: ColumnDef[] = [{ id: 'id', label: 'ID', type: 'link', sortable: true }];
     if (collectionData.length > 0) {
       const sample = collectionData[0];
@@ -117,9 +115,9 @@ export function SiteAdminWorkspace() {
     }
 
     const entity: UniversalEntity = {
-      id: \`dynamic_\${activeCollection}\`,
+      id: `dynamic_${activeCollection}`,
       title: activeCollection.charAt(0).toUpperCase() + activeCollection.slice(1),
-      description: \`Managing \${collectionData.length} records in \${activeCollection}\`,
+      description: `Managing ${collectionData.length} records in ${activeCollection}`,
       totalCount: collectionData.length,
       lastUpdated: 'Just now',
       synced: true,
@@ -161,7 +159,7 @@ export function SiteAdminWorkspace() {
         <Database className="w-6 h-6 text-[#2266ec]" />
         <div>
           <h2 className="text-xl font-bold text-white">Database Explorer</h2>
-          <p className="text-xs text-[#a6a6a6]">Full CRUD access to {state.projectName}'s connected Firebase project</p>
+          <p className="text-xs text-[#a6a6a6]">Full CRUD access to {state.projectName}&apos;s connected Firebase project</p>
         </div>
       </div>
 
