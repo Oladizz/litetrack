@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import * as LucideIcons from 'lucide-react';
 import { Loader2, Plus, Pencil, Trash2, X, Check, Search } from 'lucide-react';
 import { AdminSection, ColumnDef, FieldDef, ProjectConfig } from './project-registry';
 import { THEMES } from './theme-tokens';
@@ -375,7 +376,10 @@ export function CollectionManager({
       <div className="flex items-center justify-between mb-8">
         <div>
           <h3 className={theme.title}>
-            <span className="mr-2 opacity-80">{section.icon}</span> {section.label}
+            {(() => {
+            const Icon = (LucideIcons as any)[section.icon] || LucideIcons.Circle;
+            return <Icon className="w-5 h-5 mr-2 opacity-80" />;
+          })()} {section.label}
           </h3>
           <p className={theme.subtitle}>/{section.collection} · {rows.length} records</p>
         </div>

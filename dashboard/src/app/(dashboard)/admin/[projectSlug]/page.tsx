@@ -1,69 +1,74 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useParams } from 'next/navigation';
-import { getProjectBySlug, PROJECT_REGISTRY } from '@/components/project-admin/project-registry';
+import { useParams, useSearchParams, useRouter } from 'next/navigation';
+import { getProjectBySlug } from '@/components/project-admin/project-registry';
 import { CollectionManager } from '@/components/project-admin/admin-components';
-import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 
 import { THEMES } from '@/components/project-admin/theme-tokens';
 import { OladizzXyzWorkspace } from '@/components/project-admin/oladizz-workspace';
+import * as LucideIcons from 'lucide-react';
 
 export default function ProjectAdminPage() {
   const params = useParams();
-  const slug = params.projectSlug as string;
-  const project = getProjectBySlug(slug);
+  const slug = params?.projectSlug as string;
+  const searchParams = useSearchParams();
+  const sectionId = searchParams.get('section');
+  const router = useRouter();
 
-  const [activeSection, setActiveSection] = useState(0);
+  const project = getProjectBySlug(slug);
 
   if (!project) {
     return (
       <div className="p-8 text-center">
-        <div className="text-2xl font-bold text-white mb-2">Project Not Found</div>
-        <p className="text-[#a6a6a6] text-sm mb-6">No admin panel configured for "{slug}"</p>
-        <Link href="/admin" className="text-[#2266ec] hover:underline text-sm">← Back to Projects</Link>
+        <h2 className="text-2xl font-bold text-white">Project Not Found</h2>
+        <Link href="/admin" className="text-blue-500 hover:underline mt-4 inline-block">← Back to Projects</Link>
       </div>
     );
   }
 
-  const section = project.sections[activeSection];
-  const themeName = project.theme || 'default';
-  const theme = THEMES[themeName];
+  const section = project.sections.find(s => s.id === sectionId) || project.sections[0];
+  const theme = THEMES[project.theme || 'default'];
+
+  const renderIcon = (name: string, className?: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const Icon = (LucideIcons as any)[name] || LucideIcons.Circle;
+    return <Icon className={className || "w-4 h-4"} />;
+  };
 
   return (
     <div className={`flex h-screen overflow-hidden ${theme.canvas}`}>
       <div className={theme.canvasBg} />
       
-      {/* Left: Section Nav */}
-      <div className={`w-56 shrink-0 flex flex-col z-10 ${theme.sidebar}`}>
-        <div className="p-4 border-b border-gray-500/20">
-          <Link href="/admin" className="text-[11px] text-[#656565] hover:text-white flex items-center gap-1 mb-3 transition-colors uppercase tracking-widest font-mono">
-            <ChevronLeft className="w-3 h-3" /> All Projects
+      {/* Left: Project Sidebar */}
+      <div className={`w-64 flex flex-col border-r shrink-0 z-10 ${theme.sidebar}`}>
+        <div className="p-4 border-b border-gray-500/20 flex items-center gap-3">
+          <Link href="/admin" className="p-1.5 hover:bg-white/10 rounded transition-colors text-white">
+            <LucideIcons.ChevronLeft className="w-4 h-4" />
           </Link>
           <div className="flex items-center gap-2">
-            <span className="text-2xl">{project.icon}</span>
-            <div>
-              <div className="font-bold text-sm tracking-wider uppercase">{project.name}</div>
-              <div className="text-[10px] opacity-50 font-mono">{project.domain}</div>
-            </div>
+            {renderIcon(project.icon, "w-6 h-6 text-[#00B2FF]")}
+            <span className="font-bold text-white tracking-wide">{project.name}</span>
           </div>
         </div>
-
-        <div className="flex-1 overflow-y-auto py-4 flex flex-col gap-1">
-          {project.sections.map((sec, i) => (
-            <button
-              key={sec.id}
-              onClick={() => setActiveSection(i)}
-              className={`text-left px-4 py-3 flex items-center gap-3 ${
-                activeSection === i
-                  ? theme.sidebarNavActive
-                  : theme.sidebarNavItems
-              }`}
-            >
-              <span className="text-lg">{sec.icon}</span> {sec.label}
-            </button>
-          ))}
+        <div className="flex-1 overflow-y-auto py-4 px-2 space-y-1">
+          {project.sections.map((sec) => {
+            const isActive = section.id === sec.id;
+            return (
+              <button
+                key={sec.id}
+                onClick={() => router.push(`/admin/${project.slug}?section=${sec.id}`)}
+                className={`w-full text-left px-3 py-2 flex items-center gap-3 transition-colors ${
+                  isActive 
+                    ? theme.sidebarNavActive 
+                    : theme.sidebarNavItems
+                }`}
+              >
+                {renderIcon(sec.icon, "w-4 h-4 opacity-80")} {sec.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 

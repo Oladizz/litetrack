@@ -32,7 +32,7 @@ export interface FieldDef {
 export interface AdminSection {
   id: string;
   label: string;
-  icon: string;         // emoji
+  icon: string;         // lucide icon name
   collection: string;   // Firestore collection name
   isAuthUsers?: boolean; // If true, fetches from Firebase Auth instead of Firestore
   columns?: ColumnDef[];
@@ -44,7 +44,7 @@ export interface ProjectConfig {
   slug: string;
   name: string;
   domain: string;
-  icon: string;
+  icon: string;         // lucide icon name
   color: string;
   theme?: 'cyberpunk' | 'ecommerce' | 'default';
   firebase: {
@@ -62,27 +62,27 @@ const OLADIZZ_XYZ: ProjectConfig = {
   slug: 'oladizz-xyz',
   name: 'Oladizz.xyz',
   domain: 'oladizz.xyz',
-  icon: '🌐',
+  icon: 'Globe',
   color: '#00B2FF', // cyan
   theme: 'cyberpunk',
   firebase: {
     projectId: 'my-portfolio-7cd72',
   },
   sections: [
-    { id: 'overview', label: 'Overview', icon: '📊', collection: 'content' },
-    { id: 'ordering', label: 'Arrange Sections', icon: '📋', collection: 'content' },
-    { id: 'hero', label: 'Hero Section', icon: '👤', collection: 'content' },
-    { id: 'about', label: 'About Section', icon: '📝', collection: 'content' },
-    { id: 'experience', label: 'Experience', icon: '💼', collection: 'content' },
-    { id: 'skills', label: 'Skills', icon: '🛠️', collection: 'content' },
-    { id: 'projects', label: 'Projects', icon: '📂', collection: 'content' },
-    { id: 'contact', label: 'Contact', icon: '📧', collection: 'content' },
-    { id: 'techDNA', label: 'Tech DNA', icon: '🧬', collection: 'content' },
-    { id: 'impactTimeline', label: 'Timeline', icon: '📅', collection: 'content' },
-    { id: 'terminal', label: 'Terminal', icon: '💻', collection: 'content' },
-    { id: 'liveDashboard', label: 'Dashboard', icon: '📈', collection: 'content' },
+    { id: 'overview', label: 'Overview', icon: 'BarChart2', collection: 'content' },
+    { id: 'ordering', label: 'Arrange Sections', icon: 'List', collection: 'content' },
+    { id: 'hero', label: 'Hero Section', icon: 'User', collection: 'content' },
+    { id: 'about', label: 'About Section', icon: 'FileText', collection: 'content' },
+    { id: 'experience', label: 'Experience', icon: 'Briefcase', collection: 'content' },
+    { id: 'skills', label: 'Skills', icon: 'Wrench', collection: 'content' },
+    { id: 'projects', label: 'Projects', icon: 'Folder', collection: 'content' },
+    { id: 'contact', label: 'Contact', icon: 'Mail', collection: 'content' },
+    { id: 'techDNA', label: 'Tech DNA', icon: 'Dna', collection: 'content' },
+    { id: 'impactTimeline', label: 'Timeline', icon: 'Calendar', collection: 'content' },
+    { id: 'terminal', label: 'Terminal', icon: 'Terminal', collection: 'content' },
+    { id: 'liveDashboard', label: 'Dashboard', icon: 'LineChart', collection: 'content' },
     { 
-      id: 'messages', label: 'Messages', icon: '✉️', collection: 'contactMessages',
+      id: 'messages', label: 'Messages', icon: 'Mail', collection: 'contactMessages',
       columns: [
         { key: 'name', label: 'Name', type: 'text' },
         { key: 'email', label: 'Email', type: 'text' },
@@ -92,7 +92,7 @@ const OLADIZZ_XYZ: ProjectConfig = {
       fields: []
     },
     { 
-      id: 'comments', label: 'Comments', icon: '💬', collection: 'projectComments',
+      id: 'comments', label: 'Comments', icon: 'MessageSquare', collection: 'projectComments',
       columns: [
         { key: 'authorName', label: 'Name', type: 'text' },
         { key: 'projectId', label: 'Project', type: 'badge' },
@@ -111,7 +111,7 @@ const OLADIZZ_STORE: ProjectConfig = {
   slug: 'oladizz-store',
   name: 'Oladizz Store',
   domain: 'oladizzstore.com',
-  icon: '🛒',
+  icon: 'ShoppingCart',
   color: '#fbbf24', // amber/gold
   theme: 'ecommerce',
   firebase: {
@@ -122,7 +122,7 @@ const OLADIZZ_STORE: ProjectConfig = {
     {
       id: 'products',
       label: 'Products',
-      icon: '📦',
+      icon: 'Package',
       collection: 'products',
       columns: [
         { key: 'name', label: 'Name', type: 'text' },
@@ -151,7 +151,7 @@ const OLADIZZ_STORE: ProjectConfig = {
     {
       id: 'orders',
       label: 'Orders',
-      icon: '🧾',
+      icon: 'Receipt',
       collection: 'orders',
       columns: [
         { key: 'id', label: 'Order ID', type: 'text', truncate: 12 },
@@ -174,7 +174,7 @@ const OLADIZZ_STORE: ProjectConfig = {
     {
       id: 'customers',
       label: 'Customers',
-      icon: '👥',
+      icon: 'Users',
       collection: 'users',
       columns: [
         { key: 'name', label: 'Name', type: 'text' },
@@ -196,7 +196,7 @@ const OLADIZZ_STORE: ProjectConfig = {
     {
       id: 'categories',
       label: 'Categories',
-      icon: '🏷️',
+      icon: 'Tag',
       collection: 'categories',
       columns: [
         { key: 'name', label: 'Name', type: 'text' },
@@ -210,7 +210,7 @@ const OLADIZZ_STORE: ProjectConfig = {
     {
       id: 'coupons',
       label: 'Coupons',
-      icon: '🎟️',
+      icon: 'Ticket',
       collection: 'coupons',
       columns: [
         { key: 'code', label: 'Code', type: 'text' },
@@ -230,7 +230,7 @@ const OLADIZZ_STORE: ProjectConfig = {
     {
       id: 'auctions',
       label: 'Auctions',
-      icon: '🔨',
+      icon: 'Gavel',
       collection: 'auctions',
       columns: [
         { key: 'name', label: 'Item', type: 'text' },
@@ -253,7 +253,7 @@ const OLADIZZ_STORE: ProjectConfig = {
     {
       id: 'settings',
       label: 'Store Settings',
-      icon: '⚙️',
+      icon: 'Settings',
       collection: 'settings',
       columns: [
         { key: 'id', label: 'Setting', type: 'text' },
@@ -270,7 +270,7 @@ const OLADIZZ_STORE: ProjectConfig = {
     {
       id: 'product-requests',
       label: 'Product Requests',
-      icon: '🗳️',
+      icon: 'Inbox',
       collection: 'productRequests',
       columns: [
         { key: 'name', label: 'Product', type: 'text' },
