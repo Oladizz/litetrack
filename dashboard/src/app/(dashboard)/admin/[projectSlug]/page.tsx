@@ -8,7 +8,7 @@ import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ProjectAdminPage() {
-  const params = React.use(useParams() as any);
+  const params = useParams();
   const slug = params.projectSlug as string;
   const project = getProjectBySlug(slug);
 
