@@ -244,7 +244,7 @@ app.get('/api/finances/:siteId', async (c) => {
 });
 
 // --- Firebase Admin Proxy Routes for Admin OS ---
-import { getSiteCollection, getSiteAuthUsers, createSiteDocument, updateSiteDocument, deleteSiteDocument } from './firebase-proxy';
+import { listSiteCollections, getSiteCollection, getSiteAuthUsers, createSiteDocument, updateSiteDocument, deleteSiteDocument } from './firebase-proxy';
 
 app.get('/api/admin/firebase/:siteId/auth', async (c) => {
   try {
@@ -254,6 +254,17 @@ app.get('/api/admin/firebase/:siteId/auth', async (c) => {
   } catch (error: any) {
     console.error(`Error fetching Firebase Auth for site ${c.req.param('siteId')}:`, error);
     return c.json({ error: error.message || 'Failed to fetch Firebase Auth users' }, 500);
+  }
+});
+
+app.get('/api/admin/firebase/:siteId/collections', async (c) => {
+  try {
+    const siteId = c.req.param('siteId');
+    const collections = await listSiteCollections(siteId);
+    return c.json({ collections });
+  } catch (error: any) {
+    console.error(`Error listing collections for site ${c.req.param('siteId')}:`, error);
+    return c.json({ error: error.message || 'Failed to list collections' }, 500);
   }
 });
 

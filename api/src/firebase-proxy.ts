@@ -55,6 +55,21 @@ export async function getFirebaseAppForSite(siteId: string): Promise<App | null>
 /**
  * Fetches documents from a specific Firestore collection for a site.
  */
+/**
+ * Lists all Firestore collections for a site.
+ */
+export async function listSiteCollections(siteId: string) {
+  const app = await getFirebaseAppForSite(siteId);
+  if (!app) {
+    throw new Error('Firebase configuration not found or invalid for this site');
+  }
+
+  const db = getFirestore(app);
+  const collections = await db.listCollections();
+  
+  return collections.map(c => c.id);
+}
+
 export async function getSiteCollection(siteId: string, collectionName: string, limit = 50) {
   const app = await getFirebaseAppForSite(siteId);
   if (!app) {
