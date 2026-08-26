@@ -69,115 +69,36 @@ const OLADIZZ_XYZ: ProjectConfig = {
     projectId: 'my-portfolio-7cd72',
   },
   sections: [
-    {
-      id: 'projects',
-      label: 'Projects',
-      icon: '📂',
-      collection: 'projects',
-      columns: [
-        { key: 'title', label: 'Title', type: 'text' },
-        { key: 'category', label: 'Category', type: 'badge', badgeColors: { 'AI': '#2266ec', 'WEB3': '#8b5cf6', 'DEFI': '#10b981', 'COMMUNITY': '#f59e0b' } },
-        { key: 'platform', label: 'Platform', type: 'badge', badgeColors: { 'WEB': '#3b82f6', 'ANDROID': '#22c55e' } },
-        { key: 'status', label: 'Status', type: 'badge', badgeColors: { 'published': '#10b981', 'draft': '#f59e0b' } },
-        { key: 'liveUrl', label: 'Live URL', type: 'text', truncate: 30 },
-      ],
-      fields: [
-        { key: 'title', label: 'Project Title', type: 'text', required: true },
-        { key: 'description', label: 'Description', type: 'textarea', required: true },
-        { key: 'category', label: 'Category', type: 'select', options: ['AI', 'WEB3', 'DEFI', 'COMMUNITY', 'SAAS', 'TOOL'] },
-        { key: 'platform', label: 'Platform', type: 'select', options: ['WEB', 'ANDROID'] },
-        { key: 'status', label: 'Status', type: 'select', options: ['published', 'draft'] },
-        { key: 'tech', label: 'Technologies', type: 'list', placeholder: 'e.g. React, Solidity' },
-        { key: 'logs', label: 'Key Features', type: 'list', placeholder: 'Feature description' },
-        { key: 'githubUrl', label: 'GitHub URL', type: 'text' },
-        { key: 'liveUrl', label: 'Live URL', type: 'text' },
-        { key: 'missionOverview', label: 'Mission Overview', type: 'textarea' },
-        { key: 'standoutFeature', label: 'Standout Feature', type: 'textarea' },
-      ],
-    },
-    {
-      id: 'draft-projects',
-      label: 'AI Drafts',
-      icon: '🤖',
-      collection: 'draftProjects',
-      columns: [
-        { key: 'title', label: 'Title', type: 'text' },
-        { key: 'category', label: 'Category', type: 'badge' },
-        { key: 'status', label: 'Status', type: 'badge', badgeColors: { 'draft': '#f59e0b', 'published': '#10b981' } },
-        { key: 'githubUrl', label: 'GitHub', type: 'text', truncate: 40 },
-      ],
-      fields: [
-        { key: 'title', label: 'Title', type: 'text', required: true },
-        { key: 'description', label: 'Description', type: 'textarea' },
-        { key: 'category', label: 'Category', type: 'text' },
-        { key: 'platform', label: 'Platform', type: 'select', options: ['WEB', 'ANDROID'] },
-        { key: 'status', label: 'Status', type: 'select', options: ['draft', 'published'] },
-        { key: 'tech', label: 'Technologies', type: 'list' },
-        { key: 'githubUrl', label: 'GitHub URL', type: 'text' },
-        { key: 'liveUrl', label: 'Live URL', type: 'text' },
-      ],
-    },
-    {
-      id: 'comments',
-      label: 'Comments',
-      icon: '💬',
-      collection: 'projectComments',
-      columns: [
-        { key: 'userName', label: 'User', type: 'text' },
-        { key: 'text', label: 'Comment', type: 'text', truncate: 60 },
-        { key: 'rating', label: 'Rating', type: 'number' },
-        { key: 'likeCount', label: 'Likes', type: 'number' },
-        { key: 'projectId', label: 'Project', type: 'text' },
-      ],
-      fields: [
-        { key: 'userName', label: 'User Name', type: 'text', required: true },
-        { key: 'text', label: 'Comment', type: 'textarea', required: true },
-        { key: 'rating', label: 'Rating (1-5)', type: 'number' },
-        { key: 'projectId', label: 'Project ID', type: 'text' },
-      ],
-    },
-    {
-      id: 'messages',
-      label: 'Messages',
-      icon: '📩',
-      collection: 'contactMessages',
+    { id: 'overview', label: 'Overview', icon: '📊', collection: 'content' },
+    { id: 'ordering', label: 'Arrange Sections', icon: '📋', collection: 'content' },
+    { id: 'hero', label: 'Hero Section', icon: '👤', collection: 'content' },
+    { id: 'about', label: 'About Section', icon: '📝', collection: 'content' },
+    { id: 'experience', label: 'Experience', icon: '💼', collection: 'content' },
+    { id: 'skills', label: 'Skills', icon: '🛠️', collection: 'content' },
+    { id: 'projects', label: 'Projects', icon: '📂', collection: 'content' },
+    { id: 'contact', label: 'Contact', icon: '📧', collection: 'content' },
+    { id: 'techDNA', label: 'Tech DNA', icon: '🧬', collection: 'content' },
+    { id: 'impactTimeline', label: 'Timeline', icon: '📅', collection: 'content' },
+    { id: 'terminal', label: 'Terminal', icon: '💻', collection: 'content' },
+    { id: 'liveDashboard', label: 'Dashboard', icon: '📈', collection: 'content' },
+    { 
+      id: 'messages', label: 'Messages', icon: '✉️', collection: 'contactMessages',
       columns: [
         { key: 'name', label: 'Name', type: 'text' },
         { key: 'email', label: 'Email', type: 'text' },
         { key: 'subject', label: 'Subject', type: 'text' },
-        { key: 'message', label: 'Message', type: 'text', truncate: 50 },
+        { key: 'timestamp', label: 'Time', type: 'date' }
       ],
-      fields: [
-        { key: 'name', label: 'Name', type: 'text' },
-        { key: 'email', label: 'Email', type: 'text' },
-        { key: 'subject', label: 'Subject', type: 'text' },
-        { key: 'message', label: 'Message', type: 'textarea' },
-      ],
+      fields: []
     },
-    {
-      id: 'content',
-      label: 'CMS Content',
-      icon: '📝',
-      collection: 'content',
+    { 
+      id: 'comments', label: 'Comments', icon: '💬', collection: 'projectComments',
       columns: [
-        { key: 'id', label: 'Document', type: 'text' },
+        { key: 'authorName', label: 'Name', type: 'text' },
+        { key: 'projectId', label: 'Project', type: 'badge' },
+        { key: 'text', label: 'Comment', type: 'text' }
       ],
-      fields: [
-        // Content is a singleton doc — we'll show it as raw JSON editor
-        { key: '__raw', label: 'Full Content JSON', type: 'json' },
-      ],
-    },
-    {
-      id: 'stats',
-      label: 'Stats',
-      icon: '📊',
-      collection: 'stats',
-      columns: [
-        { key: 'id', label: 'Stat', type: 'text' },
-      ],
-      fields: [
-        { key: '__raw', label: 'Raw Data', type: 'json' },
-      ],
+      fields: []
     },
   ],
 };

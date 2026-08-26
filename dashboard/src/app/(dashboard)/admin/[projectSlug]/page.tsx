@@ -64,10 +64,13 @@ export default function ProjectAdminPage() {
               <span className="text-lg">{sec.icon}</span> {sec.label}
             </button>
           ))}
+        </div>
+      </div>
+
       {/* Right: Main Canvas */}
       <div className="flex-1 overflow-y-auto p-8 z-10 custom-scrollbar">
         <div className="max-w-5xl mx-auto">
-          {project.slug === 'oladizz-xyz' ? (
+          {project.slug === 'oladizz-xyz' && section.collection === 'content' ? (
             <OladizzXyzWorkspace sectionId={section.id} />
           ) : (
             <CollectionManager project={project} section={section} />

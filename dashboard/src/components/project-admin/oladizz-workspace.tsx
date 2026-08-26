@@ -549,7 +549,7 @@ export function OladizzXyzWorkspace({
           <h2 className={theme.title}>Projects Portfolio</h2>
           <button 
             onClick={() => {
-              const newProject = { id: Date.now(), title: 'New Project', description: '', category: 'WEB3', tech: [] };
+              const newProject = { id: Date.now(), title: 'New Project', description: '', category: 'WEB3', platform: 'WEB', tech: [], images: [], githubUrl: '#', liveUrl: '#' };
               setData({...data, projects: [...projects, newProject]});
             }}
             className={theme.primaryButton + " flex items-center gap-2"}
@@ -558,61 +558,69 @@ export function OladizzXyzWorkspace({
           </button>
         </div>
         
-        <div className="space-y-4">
+        <div className="space-y-6">
           {projects.map((proj: any, index: number) => (
-            <div key={proj.id || index} className={theme.card + " p-6"}>
-              <div className="flex justify-between items-start mb-4">
-                <h3 className="text-[#00B2FF] font-mono uppercase tracking-widest">{proj.title || 'Untitled'}</h3>
-                <button 
-                  onClick={() => {
-                    const newArr = [...projects];
-                    newArr.splice(index, 1);
-                    setData({...data, projects: newArr});
-                  }}
-                  className="text-red-500 hover:text-red-400"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
+            <div key={proj.id || index} className={theme.card + " p-6 relative group"}>
+              <button 
+                onClick={() => { const newArr=[...projects]; newArr.splice(index,1); setData({...data, projects: newArr}); }}
+                className="absolute top-4 right-4 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity hover:text-red-400"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
               
-              <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
                 <div>
                   <label className={theme.label}>Title</label>
-                  <input 
-                    className={theme.input} 
-                    value={proj.title || ''} 
-                    onChange={(e) => {
-                      const newArr = [...projects];
-                      newArr[index].title = e.target.value;
-                      setData({...data, projects: newArr});
-                    }} 
-                  />
+                  <input className={theme.input} value={proj.title || ''} onChange={e => { const arr=[...projects]; arr[index].title=e.target.value; setData({...data, projects: arr}); }} />
                 </div>
                 <div>
                   <label className={theme.label}>Category</label>
-                  <input 
-                    className={theme.input} 
-                    value={proj.category || ''} 
-                    onChange={(e) => {
-                      const newArr = [...projects];
-                      newArr[index].category = e.target.value;
-                      setData({...data, projects: newArr});
-                    }} 
-                  />
+                  <input className={theme.input} value={proj.category || ''} onChange={e => { const arr=[...projects]; arr[index].category=e.target.value; setData({...data, projects: arr}); }} />
+                </div>
+                <div>
+                  <label className={theme.label}>Platform</label>
+                  <select className={theme.input} value={proj.platform || 'WEB'} onChange={e => { const arr=[...projects]; arr[index].platform=e.target.value; setData({...data, projects: arr}); }}>
+                    <option value="WEB">Web / Widescreen</option>
+                    <option value="ANDROID">Android App</option>
+                  </select>
                 </div>
               </div>
-              <div>
+              
+              <div className="mb-4">
                 <label className={theme.label}>Description</label>
-                <textarea 
+                <textarea className={theme.input} rows={3} value={proj.description || ''} onChange={e => { const arr=[...projects]; arr[index].description=e.target.value; setData({...data, projects: arr}); }} />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                <div>
+                  <label className={theme.label}>GitHub URL</label>
+                  <input className={theme.input} value={proj.githubUrl || ''} onChange={e => { const arr=[...projects]; arr[index].githubUrl=e.target.value; setData({...data, projects: arr}); }} />
+                </div>
+                <div>
+                  <label className={theme.label}>Live URL</label>
+                  <input className={theme.input} value={proj.liveUrl || ''} onChange={e => { const arr=[...projects]; arr[index].liveUrl=e.target.value; setData({...data, projects: arr}); }} />
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <label className={theme.label}>Tech Stack (Comma separated)</label>
+                <input 
                   className={theme.input} 
-                  rows={3}
-                  value={proj.description || ''} 
-                  onChange={(e) => {
-                    const newArr = [...projects];
-                    newArr[index].description = e.target.value;
-                    setData({...data, projects: newArr});
-                  }} 
+                  value={(proj.tech || []).join(', ')} 
+                  onChange={e => { const arr=[...projects]; arr[index].tech=e.target.value.split(',').map(s=>s.trim()).filter(Boolean); setData({...data, projects: arr}); }} 
+                  placeholder="React, Firebase, Tailwind"
                 />
+              </div>
+
+              <div className="mb-4">
+                <label className={theme.label}>Image URLs (Comma separated)</label>
+                <input 
+                  className={theme.input} 
+                  value={(proj.images || []).join(', ')} 
+                  onChange={e => { const arr=[...projects]; arr[index].images=e.target.value.split(',').map(s=>s.trim()).filter(Boolean); setData({...data, projects: arr}); }} 
+                  placeholder="https://...image1.png, https://...image2.png"
+                />
+                <p className="text-xs text-gray-500 mt-1">To upload new images to Firebase, use the main Oladizz.xyz dashboard. For now, you can paste URLs here.</p>
               </div>
             </div>
           ))}
@@ -902,6 +910,39 @@ export function OladizzXyzWorkspace({
         <button onClick={() => handleSave(data.liveDashboard)} className={theme.primaryButton + " flex items-center gap-2"}>
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} SAVE DASHBOARD
         </button>
+      </div>
+    );
+  }
+
+  // ==========================================
+  // MESSAGES EDITOR (contactMessages)
+  // ==========================================
+  if (sectionId === 'messages') {
+    return (
+      <div className="animate-in fade-in duration-300 space-y-6">
+        <h2 className={theme.title}>Messages Viewer</h2>
+        <p className="text-gray-500 mb-6">Real-time contact messages are loaded from the project database.</p>
+        <div className="p-12 text-center border border-dashed border-gray-800 rounded-lg">
+          <MessageSquare className="w-8 h-8 text-[#00B2FF] mx-auto mb-4 opacity-50" />
+          <p className="text-gray-400 font-mono text-sm">Messages are mapped to the generic Collection Manager.</p>
+          <p className="text-[#00B2FF] mt-2 cursor-pointer hover:underline text-xs" onClick={() => window.location.href='/admin/oladizz-xyz'}>If you see this, routing failed.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ==========================================
+  // COMMENTS EDITOR (projectComments)
+  // ==========================================
+  if (sectionId === 'comments') {
+    return (
+      <div className="animate-in fade-in duration-300 space-y-6">
+        <h2 className={theme.title}>Comments Manager</h2>
+        <p className="text-gray-500 mb-6">Project comments are loaded from the project database.</p>
+        <div className="p-12 text-center border border-dashed border-gray-800 rounded-lg">
+          <MessageSquare className="w-8 h-8 text-[#00B2FF] mx-auto mb-4 opacity-50" />
+          <p className="text-gray-400 font-mono text-sm">Comments are mapped to the generic Collection Manager.</p>
+        </div>
       </div>
     );
   }
