@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Loader2, Plus, Pencil, Trash2, X, Check, ChevronLeft, Search } from 'lucide-react';
+import { Loader2, Plus, Pencil, Trash2, X, Check, Search } from 'lucide-react';
 import { AdminSection, ColumnDef, FieldDef, ProjectConfig } from './project-registry';
+import { THEMES } from './theme-tokens';
 import { toast } from '@/components/ui/toast';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://litetrack-api-916484331446.us-central1.run.app';
@@ -35,12 +36,14 @@ function AdminDataTable({
   onEdit,
   onDelete,
   loading,
+  theme,
 }: {
   rows: any[];
   columns: ColumnDef[];
   onEdit: (row: any) => void;
   onDelete: (id: string) => void;
   loading: boolean;
+  theme: any;
 }) {
   const [search, setSearch] = useState('');
 
@@ -65,34 +68,34 @@ function AdminDataTable({
   return (
     <div>
       <div className="flex items-center gap-2 mb-4 px-1">
-        <Search className="w-4 h-4 text-[#656565]" />
+        <Search className="w-4 h-4 opacity-50" />
         <input
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Filter records..."
-          className="flex-1 bg-transparent border-b border-[#262626] focus:border-[#2266ec] text-sm text-white outline-none py-1 placeholder:text-[#656565]"
+          className="flex-1 bg-transparent border-b border-gray-500/20 focus:border-current outline-none py-1 text-sm transition-colors"
         />
-        <span className="text-[10px] text-[#656565] font-mono">{filtered.length} records</span>
+        <span className="text-[10px] opacity-50 font-mono">{filtered.length} records</span>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-[#262626]">
+      <div className={`overflow-x-auto ${theme.card}`}>
         <table className="w-full text-left">
           <thead>
-            <tr className="bg-[#1a1a1a] border-b border-[#262626]">
+            <tr className={theme.tableHeader}>
               {columns.map(col => (
-                <th key={col.key} className="px-4 py-3 text-[10px] font-bold text-[#656565] uppercase tracking-wider">{col.label}</th>
+                <th key={col.key} className="px-4 py-3">{col.label}</th>
               ))}
-              <th className="px-4 py-3 text-[10px] font-bold text-[#656565] uppercase tracking-wider text-right">Actions</th>
+              <th className="px-4 py-3 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#262626]">
+          <tbody>
             {filtered.length === 0 ? (
-              <tr><td colSpan={columns.length + 1} className="text-center py-12 text-[#656565] text-sm">No records found</td></tr>
+              <tr><td colSpan={columns.length + 1} className="text-center py-12 opacity-50 text-sm">No records found</td></tr>
             ) : (
               filtered.map((row, i) => (
-                <tr key={row.id || i} className="hover:bg-[#1a1a1a]/50 transition-colors">
+                <tr key={row.id || i} className={theme.tableRow}>
                   {columns.map(col => (
-                    <td key={col.key} className="px-4 py-3 text-[13px] text-[#e0e0e0]">
+                    <td key={col.key} className={`px-4 py-3 ${theme.tableCell}`}>
                       {col.type === 'badge' ? (
                         <BadgeCell value={String(row[col.key] ?? '')} colors={col.badgeColors} />
                       ) : col.type === 'boolean' ? (
@@ -100,7 +103,7 @@ function AdminDataTable({
                       ) : col.type === 'image' && row[col.key] ? (
                         <img src={row[col.key]} alt="" className="w-8 h-8 rounded object-cover" />
                       ) : col.type === 'list' && Array.isArray(row[col.key]) ? (
-                        <span className="text-[#a6a6a6]">{row[col.key].length} items</span>
+                        <span className="opacity-50">{row[col.key].length} items</span>
                       ) : (
                         <span className={col.truncate ? 'truncate block max-w-[200px]' : ''}>
                           {String(row[col.key] ?? '—')}
@@ -109,12 +112,12 @@ function AdminDataTable({
                     </td>
                   ))}
                   <td className="px-4 py-3 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => onEdit(row)} className="p-1.5 hover:bg-[#262626] rounded text-[#a6a6a6] hover:text-white transition-colors">
-                        <Pencil className="w-3.5 h-3.5" />
+                    <div className="flex items-center justify-end gap-1">
+                      <button onClick={() => onEdit(row)} className={theme.secondaryButton}>
+                        <Pencil className="w-4 h-4" />
                       </button>
-                      <button onClick={() => onDelete(row.id)} className="p-1.5 hover:bg-red-500/10 rounded text-[#a6a6a6] hover:text-red-400 transition-colors">
-                        <Trash2 className="w-3.5 h-3.5" />
+                      <button onClick={() => onDelete(row.id)} className={`${theme.secondaryButton} hover:text-red-500 hover:bg-red-50`}>
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </td>
@@ -137,12 +140,14 @@ function RecordEditor({
   onSave,
   onClose,
   isNew,
+  theme,
 }: {
   fields: FieldDef[];
   record: any;
   onSave: (data: any) => Promise<void>;
   onClose: () => void;
   isNew: boolean;
+  theme: any;
 }) {
   const [formData, setFormData] = useState<any>({ ...record });
   const [saving, setSaving] = useState(false);
@@ -166,16 +171,16 @@ function RecordEditor({
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-6 animate-in fade-in duration-200">
-      <div className="bg-[#121212] border border-[#333] rounded-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
-        <div className="px-6 py-4 border-b border-[#262626] flex items-center justify-between">
-          <h3 className="text-sm font-bold text-white">{isNew ? 'Create Record' : 'Edit Record'}</h3>
-          <button onClick={onClose} className="text-[#a6a6a6] hover:text-white"><X className="w-5 h-5" /></button>
+      <div className={`${theme.modal} w-full max-w-2xl max-h-[85vh] flex flex-col`}>
+        <div className="px-6 py-4 border-b border-gray-500/20 flex items-center justify-between">
+          <h3 className="text-sm font-bold uppercase tracking-wider">{isNew ? 'Create Record' : 'Edit Record'}</h3>
+          <button onClick={onClose} className="opacity-50 hover:opacity-100"><X className="w-5 h-5" /></button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {fields.map(field => (
             <div key={field.key}>
-              <label className="block text-[11px] text-[#a6a6a6] font-bold uppercase tracking-wider mb-1.5">
+              <label className={theme.label}>
                 {field.label} {field.required && <span className="text-red-400">*</span>}
               </label>
 
@@ -184,7 +189,7 @@ function RecordEditor({
                   value={formData[field.key] || ''}
                   onChange={e => handleChange(field.key, e.target.value)}
                   placeholder={field.placeholder}
-                  className="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-[#2266ec] transition-colors"
+                  className={theme.input}
                 />
               )}
 
@@ -193,7 +198,7 @@ function RecordEditor({
                   value={formData[field.key] || ''}
                   onChange={e => handleChange(field.key, e.target.value)}
                   rows={3}
-                  className="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-[#2266ec] resize-none transition-colors"
+                  className={`${theme.input} resize-none`}
                 />
               )}
 
@@ -202,7 +207,7 @@ function RecordEditor({
                   type="number"
                   value={formData[field.key] ?? ''}
                   onChange={e => handleChange(field.key, parseFloat(e.target.value) || 0)}
-                  className="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-[#2266ec] transition-colors"
+                  className={theme.input}
                 />
               )}
 
@@ -210,7 +215,7 @@ function RecordEditor({
                 <select
                   value={formData[field.key] || ''}
                   onChange={e => handleChange(field.key, e.target.value)}
-                  className="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-[#2266ec] transition-colors"
+                  className={theme.input}
                 >
                   <option value="">Select...</option>
                   {field.options?.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -220,8 +225,8 @@ function RecordEditor({
               {field.type === 'boolean' && (
                 <button
                   onClick={() => handleChange(field.key, !formData[field.key])}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    formData[field.key] ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-[#1a1a1a] text-[#a6a6a6] border border-[#262626]'
+                  className={`px-4 py-2 rounded font-bold transition-colors ${
+                    formData[field.key] ? 'bg-green-500 text-white' : 'bg-gray-500/20 text-gray-400'
                   }`}
                 >
                   {formData[field.key] ? 'Active ✓' : 'Inactive'}
@@ -239,7 +244,7 @@ function RecordEditor({
                           arr[idx] = e.target.value;
                           handleChange(field.key, arr);
                         }}
-                        className="flex-1 bg-[#1a1a1a] border border-[#262626] rounded-lg px-3 py-1.5 text-sm text-white outline-none focus:border-[#2266ec]"
+                        className={theme.input}
                       />
                       <button
                         onClick={() => {
@@ -247,7 +252,7 @@ function RecordEditor({
                           arr.splice(idx, 1);
                           handleChange(field.key, arr);
                         }}
-                        className="text-red-400 hover:text-red-300"
+                        className="text-red-400 hover:text-red-300 px-2"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -255,7 +260,7 @@ function RecordEditor({
                   ))}
                   <button
                     onClick={() => handleChange(field.key, [...(formData[field.key] || []), ''])}
-                    className="text-[11px] text-[#2266ec] hover:text-white transition-colors"
+                    className="text-xs opacity-70 hover:opacity-100 mt-2 font-bold uppercase tracking-widest"
                   >
                     + Add Item
                   </button>
@@ -270,19 +275,19 @@ function RecordEditor({
                     catch { handleChange(field.key, e.target.value); }
                   }}
                   rows={8}
-                  className="w-full bg-[#1a1a1a] border border-[#262626] rounded-lg px-3 py-2 text-xs text-white font-mono outline-none focus:border-[#2266ec] resize-none transition-colors"
+                  className={`${theme.input} font-mono text-xs resize-none`}
                 />
               )}
             </div>
           ))}
         </div>
 
-        <div className="px-6 py-4 border-t border-[#262626] flex items-center justify-end gap-3">
-          <button onClick={onClose} className="px-4 py-2 text-sm text-[#a6a6a6] hover:text-white transition-colors">Cancel</button>
+        <div className="px-6 py-4 border-t border-gray-500/20 flex items-center justify-end gap-3">
+          <button onClick={onClose} className="px-4 py-2 text-sm opacity-50 hover:opacity-100 transition-opacity font-bold uppercase tracking-widest">Cancel</button>
           <button
             onClick={handleSubmit}
             disabled={saving}
-            className="px-5 py-2 bg-[#2266ec] hover:bg-[#1d57cc] text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2"
+            className={`${theme.primaryButton} flex items-center gap-2 disabled:opacity-50`}
           >
             {saving && <Loader2 className="w-4 h-4 animate-spin" />}
             {isNew ? 'Create' : 'Save Changes'}
@@ -308,6 +313,8 @@ export function CollectionManager({
   const [editingRecord, setEditingRecord] = useState<any | null>(null);
   const [isNew, setIsNew] = useState(false);
 
+  const themeName = project.theme || 'default';
+  const theme = THEMES[themeName];
   const dbParam = project.firebase.databaseId ? `?databaseId=${project.firebase.databaseId}` : '';
 
   const fetchData = async () => {
@@ -364,17 +371,17 @@ export function CollectionManager({
   };
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
+    <div className="z-10 relative">
+      <div className="flex items-center justify-between mb-8">
         <div>
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
-            <span>{section.icon}</span> {section.label}
+          <h3 className={theme.title}>
+            <span className="mr-2 opacity-80">{section.icon}</span> {section.label}
           </h3>
-          <p className="text-xs text-[#656565] mt-0.5 font-mono">/{section.collection} · {rows.length} records</p>
+          <p className={theme.subtitle}>/{section.collection} · {rows.length} records</p>
         </div>
         <button
           onClick={() => { setEditingRecord({}); setIsNew(true); }}
-          className="flex items-center gap-2 px-4 py-2 bg-[#2266ec] hover:bg-[#1d57cc] text-white text-xs font-bold rounded-lg transition-colors"
+          className={`${theme.primaryButton} flex items-center gap-2`}
         >
           <Plus className="w-4 h-4" /> Add {section.label.replace(/s$/, '')}
         </button>
@@ -386,6 +393,7 @@ export function CollectionManager({
         onEdit={(row) => { setEditingRecord(row); setIsNew(false); }}
         onDelete={handleDelete}
         loading={loading}
+        theme={theme}
       />
 
       {editingRecord && (
@@ -395,6 +403,7 @@ export function CollectionManager({
           onSave={handleSave}
           onClose={() => { setEditingRecord(null); setIsNew(false); }}
           isNew={isNew}
+          theme={theme}
         />
       )}
     </div>

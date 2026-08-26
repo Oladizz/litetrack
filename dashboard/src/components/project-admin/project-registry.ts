@@ -46,6 +46,7 @@ export interface ProjectConfig {
   domain: string;
   icon: string;
   color: string;
+  theme?: 'cyberpunk' | 'ecommerce' | 'default';
   firebase: {
     projectId: string;
     databaseId?: string; // defaults to "(default)"
@@ -62,7 +63,8 @@ const OLADIZZ_XYZ: ProjectConfig = {
   name: 'Oladizz.xyz',
   domain: 'oladizz.xyz',
   icon: '🌐',
-  color: '#8b5cf6', // purple
+  color: '#00B2FF', // cyan
+  theme: 'cyberpunk',
   firebase: {
     projectId: 'my-portfolio-7cd72',
   },
@@ -189,7 +191,8 @@ const OLADIZZ_STORE: ProjectConfig = {
   name: 'Oladizz Store',
   domain: 'oladizzstore.com',
   icon: '🛒',
-  color: '#2266ec', // blue
+  color: '#fbbf24', // amber/gold
+  theme: 'ecommerce',
   firebase: {
     projectId: 'my-portfolio-7cd72',
     databaseId: 'store',
