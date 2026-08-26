@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { THEMES } from '../theme-tokens';
-import { Loader2, Plus, Trash2, Save, X } from 'lucide-react';
+import { THEMES } from './theme-tokens';
+import { Loader2, Plus, Trash2, Save, X, Folder, Layers, Briefcase, List, MessageSquare } from 'lucide-react';
 import { toast } from '@/components/ui/toast';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://litetrack-api-916484331446.us-central1.run.app';
@@ -18,11 +18,26 @@ export function OladizzXyzWorkspace({
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [commentCount, setCommentCount] = useState(0);
   const theme = THEMES.cyberpunk;
 
   useEffect(() => {
     fetchData();
+    fetchCommentCount();
   }, []);
+
+  const fetchCommentCount = async () => {
+    try {
+      const token = localStorage.getItem('litetrack_token');
+      const res = await fetch(`${API_URL}/api/project-admin/my-portfolio-7cd72/projectComments`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const json = await res.json();
+      setCommentCount(json.data ? json.data.length : 0);
+    } catch (err) {
+      console.error('Failed to load comments count');
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -72,6 +87,61 @@ export function OladizzXyzWorkspace({
   }
 
   const sectionData = data[sectionId];
+
+// ==========================================
+  // OVERVIEW EDITOR (Matches OverviewTab.tsx)
+  // ==========================================
+  if (sectionId === 'overview') {
+    const stats = [
+      { name: 'Projects', value: data.projects?.length || 0, icon: Folder },
+      { name: 'Skills', value: (data.skills || []).reduce((acc: number, cat: any) => acc + (cat.skills?.length || 0), 0), icon: Layers },
+      { name: 'Experience', value: data.experience?.length || 0, icon: Briefcase },
+      { name: 'Timeline Events', value: data.impactTimeline?.length || 0, icon: List },
+      { name: 'Comments', value: commentCount, icon: MessageSquare },
+    ];
+
+    const updateHiddenSections = async (newHidden: string[]) => {
+      handleSave(newHidden, 'hiddenSections');
+    };
+
+    const enableCompactMode = () => {
+      updateHiddenSections(Array.from(new Set([...(data.hiddenSections || []), 'terminal', 'techDNA', 'impactTimeline'])));
+    };
+
+    const restoreFullMode = () => {
+      updateHiddenSections((data.hiddenSections || []).filter((s: string) => !['terminal', 'techDNA', 'impactTimeline'].includes(s)));
+    };
+
+    return (
+      <div className="animate-in fade-in duration-300 space-y-8 font-sans">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h3 className="text-white text-lg font-bold">CMS DASHBOARD</h3>
+            <p className="text-gray-500 text-sm">Select a section from the sidebar to begin editing content.</p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <button onClick={enableCompactMode} className="px-4 py-2 bg-gray-800 hover:bg-red-900/40 text-gray-300 hover:text-red-400 rounded text-xs font-bold tracking-widest uppercase transition-colors border border-gray-700 hover:border-red-500/50">
+              Hide Decor Sections
+            </button>
+            <button onClick={restoreFullMode} className="px-4 py-2 bg-[#00B2FF]/10 hover:bg-[#00B2FF]/20 text-[#00B2FF] rounded text-xs font-bold tracking-widest uppercase transition-colors border border-[#00B2FF]/30 hover:border-[#00B2FF]/80">
+              Show All Sections
+            </button>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {stats.map(stat => (
+            <div key={stat.name} className="bg-gray-900/40 border border-gray-800 p-4 rounded flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400">{stat.name}</p>
+                <p className="text-3xl font-bold text-white">{stat.value}</p>
+              </div>
+              <stat.icon className="w-8 h-8 text-[#00B2FF]" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   // ==========================================
   // HERO EDITOR
