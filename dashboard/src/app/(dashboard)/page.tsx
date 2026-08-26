@@ -1,6 +1,6 @@
-import { SiteAdminWorkspace } from '@/components/admin/site-admin-workspace';
 'use client';
 
+import { SiteAdminWorkspace } from '@/components/admin/site-admin-workspace';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Brush, ReferenceArea, ReferenceDot, ReferenceLine } from 'recharts';
