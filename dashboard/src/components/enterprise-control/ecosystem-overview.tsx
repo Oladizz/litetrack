@@ -1,5 +1,5 @@
 "use client";
-
+import { IconRenderer } from '@/components/ui/IconRenderer';
 import React from 'react';
 import {
   Globe, TrendingUp, TrendingDown, Minus, ShieldCheck, Server,
@@ -40,7 +40,7 @@ export function EcosystemOverview({ kpis, health, apps, onSelectApp }: Props) {
         {kpis.map(kpi => (
           <div key={kpi.label} className="bg-[#1a1a1a] border border-[#262626] rounded-xl p-4 space-y-1.5 shadow-xl">
             <div className="text-[10px] text-[#656565] uppercase font-semibold flex items-center gap-1.5">
-              <span>{kpi.icon}</span> {kpi.label}
+              <IconRenderer name={kpi.icon} className="w-3.5 h-3.5" /> {kpi.label}
             </div>
             <div className="text-xl font-bold text-white font-mono">{kpi.value}</div>
             {kpi.trend && (
@@ -93,7 +93,7 @@ export function EcosystemOverview({ kpis, health, apps, onSelectApp }: Props) {
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <span className="text-xl">{app.icon}</span>
+                  <IconRenderer name={app.icon} className="w-6 h-6 text-gray-400" />
                   <div>
                     <div className="font-bold text-white text-sm">{app.name}</div>
                     <div className="flex items-center gap-1.5 text-[9px] text-[#656565]">

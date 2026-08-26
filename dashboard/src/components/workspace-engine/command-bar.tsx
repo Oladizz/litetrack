@@ -5,6 +5,7 @@ import {
   Search, Command, Layers, Bell, User, Activity, ChevronDown,
   Sparkles, Cpu, ArrowRight, X, Zap, Settings, Moon, LogOut, Plus
 } from 'lucide-react';
+import { IconRenderer } from '@/components/ui/IconRenderer';
 import { Workspace, CommandAction } from './types';
 
 interface Props {
@@ -213,7 +214,7 @@ export function CommandBar({
                   onClick={() => { onCommandExecute(cmd.label); setShowPalette(false); setCommandInput(''); }}
                   className="w-full flex items-center gap-3 px-4 py-2 hover:bg-[#262626] transition-colors"
                 >
-                  <span className="text-sm">{cmd.icon}</span>
+                  <IconRenderer name={cmd.icon} className="w-4 h-4 text-[#a6a6a6]" />
                   <span className="text-xs text-white">{cmd.label}</span>
                   {cmd.shortcut && (
                     <kbd className="ml-auto text-[9px] text-[#656565] bg-[#121212] px-1.5 py-0.5 rounded border border-[#333] font-mono">
@@ -251,7 +252,7 @@ export function CommandBar({
                 ws.id === activeWorkspaceId ? 'bg-[#2266ec]/10' : ''
               }`}
             >
-              <span className="text-sm">{ws.icon}</span>
+              <IconRenderer name={ws.icon} className="w-4 h-4 text-[#a6a6a6]" />
               <div className="flex-1 min-w-0">
                 <div className="text-xs font-semibold text-white truncate">{ws.title}</div>
                 <div className="text-[9px] text-[#656565] truncate">{ws.description}</div>

@@ -1,5 +1,5 @@
 "use client";
-
+import { IconRenderer } from '@/components/ui/IconRenderer';
 import React from 'react';
 import {
   DollarSign, TrendingUp, TrendingDown, Building2, Users, Bot,
@@ -65,7 +65,7 @@ export function CostOrganizations({ costs, organizations }: Props) {
               <div key={c.category} className="bg-[#121212] border border-[#262626] rounded-xl p-4 space-y-2.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-lg">{c.icon}</span>
+                    <IconRenderer name={c.icon} className="w-4 h-4 text-gray-400" />
                     <span className="text-xs font-bold text-white">{c.category}</span>
                   </div>
                   <div className={`text-[10px] font-mono flex items-center gap-1 ${c.trend > 0 ? 'text-red-400' : 'text-green-400'}`}>

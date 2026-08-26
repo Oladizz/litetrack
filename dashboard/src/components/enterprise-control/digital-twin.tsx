@@ -1,5 +1,5 @@
 "use client";
-
+import { IconRenderer } from '@/components/ui/IconRenderer';
 import React, { useState } from 'react';
 import {
   Network, ChevronRight, ChevronDown, Building2, AppWindow, Bot,
@@ -22,44 +22,44 @@ const TWIN_DATA: DigitalTwinNode = {
   id: 'root',
   label: 'Enterprise Ecosystem',
   type: 'organization',
-  icon: '🌐',
+  icon: 'Globe',
   health: 98,
   children: [
     {
-      id: 'org_1', label: 'OLADIZZ Corp', type: 'organization', icon: '🏢', health: 98,
+      id: 'org_1', label: 'OLADIZZ Corp', type: 'organization', icon: 'Building', health: 98,
       stats: [{ label: 'MRR', value: '$48,200' }, { label: 'Users', value: '2,493' }, { label: 'Plan', value: 'Enterprise' }],
       children: [
         {
-          id: 'app_analytics', label: 'Analytics Pro', type: 'application', icon: '📊', health: 99,
+          id: 'app_analytics', label: 'Analytics Pro', type: 'application', icon: 'BarChart2', health: 99,
           stats: [{ label: 'Uptime', value: '99.99%' }, { label: 'Latency', value: '24ms' }, { label: 'Daily Events', value: '3.2M' }],
           children: [
-            { id: 'ai_analytics', label: 'Analytics AI', type: 'ai_agent', icon: '🤖', health: 94, stats: [{ label: 'Status', value: 'Running' }, { label: 'Decisions', value: '142' }, { label: 'Cost', value: '$12.40' }] },
-            { id: 'res_dashboards', label: 'Dashboards', type: 'resource', icon: '📈', health: 100, stats: [{ label: 'Count', value: '28' }, { label: 'Active', value: '24' }] },
-            { id: 'users_analytics', label: 'Analytics Users', type: 'user_group', icon: '👥', health: 100, stats: [{ label: 'Active', value: '340' }, { label: 'Admins', value: '12' }] },
+            { id: 'ai_analytics', label: 'Analytics AI', type: 'ai_agent', icon: 'Bot', health: 94, stats: [{ label: 'Status', value: 'Running' }, { label: 'Decisions', value: '142' }, { label: 'Cost', value: '$12.40' }] },
+            { id: 'res_dashboards', label: 'Dashboards', type: 'resource', icon: 'TrendingUp', health: 100, stats: [{ label: 'Count', value: '28' }, { label: 'Active', value: '24' }] },
+            { id: 'users_analytics', label: 'Analytics Users', type: 'user_group', icon: 'Users', health: 100, stats: [{ label: 'Active', value: '340' }, { label: 'Admins', value: '12' }] },
           ],
         },
         {
-          id: 'app_crm', label: 'CRM Engine', type: 'application', icon: '🤝', health: 92,
+          id: 'app_crm', label: 'CRM Engine', type: 'application', icon: 'Handshake', health: 92,
           stats: [{ label: 'Uptime', value: '99.95%' }, { label: 'Latency', value: '142ms' }, { label: 'Daily Events', value: '1.8M' }],
           children: [
-            { id: 'ai_sales', label: 'Sales AI', type: 'ai_agent', icon: '💼', health: 96, stats: [{ label: 'Status', value: 'Running' }, { label: 'Leads Scored', value: '2,891' }] },
-            { id: 'res_contacts', label: 'Contacts DB', type: 'resource', icon: '📇', health: 88, stats: [{ label: 'Records', value: '124K' }, { label: 'Size', value: '2.4 GB' }] },
+            { id: 'ai_sales', label: 'Sales AI', type: 'ai_agent', icon: 'Briefcase', health: 96, stats: [{ label: 'Status', value: 'Running' }, { label: 'Leads Scored', value: '2,891' }] },
+            { id: 'res_contacts', label: 'Contacts DB', type: 'resource', icon: 'Contact', health: 88, stats: [{ label: 'Records', value: '124K' }, { label: 'Size', value: '2.4 GB' }] },
           ],
         },
         {
-          id: 'app_school', label: 'SchoolTrack', type: 'application', icon: '🎓', health: 97,
+          id: 'app_school', label: 'SchoolTrack', type: 'application', icon: 'GraduationCap', health: 97,
           stats: [{ label: 'Uptime', value: '99.98%' }, { label: 'Students', value: '8,400' }],
           children: [
-            { id: 'ai_education', label: 'Education AI', type: 'ai_agent', icon: '📚', health: 95, stats: [{ label: 'Status', value: 'Running' }, { label: 'Assessments', value: '430' }] },
+            { id: 'ai_education', label: 'Education AI', type: 'ai_agent', icon: 'BookOpen', health: 95, stats: [{ label: 'Status', value: 'Running' }, { label: 'Assessments', value: '430' }] },
           ],
         },
         {
-          id: 'infra', label: 'Infrastructure', type: 'infrastructure', icon: '🖥️', health: 99,
+          id: 'infra', label: 'Infrastructure', type: 'infrastructure', icon: 'Monitor', health: 99,
           stats: [{ label: 'Regions', value: '3' }, { label: 'Instances', value: '12' }, { label: 'CDN', value: 'Cloudflare' }],
           children: [
-            { id: 'infra_db', label: 'BigQuery Cluster', type: 'infrastructure', icon: '🗄️', health: 95, stats: [{ label: 'Storage', value: '4.2 TB' }, { label: 'Queries/day', value: '84K' }] },
-            { id: 'infra_api', label: 'API Gateway', type: 'infrastructure', icon: '🔌', health: 99, stats: [{ label: 'Requests/min', value: '12,400' }, { label: 'P99', value: '48ms' }] },
-            { id: 'infra_ai', label: 'AI Compute', type: 'infrastructure', icon: '⚡', health: 94, stats: [{ label: 'GPU Util', value: '72%' }, { label: 'Tokens/day', value: '14.2M' }] },
+            { id: 'infra_db', label: 'BigQuery Cluster', type: 'infrastructure', icon: 'Database', health: 95, stats: [{ label: 'Storage', value: '4.2 TB' }, { label: 'Queries/day', value: '84K' }] },
+            { id: 'infra_api', label: 'API Gateway', type: 'infrastructure', icon: 'Plug', health: 99, stats: [{ label: 'Requests/min', value: '12,400' }, { label: 'P99', value: '48ms' }] },
+            { id: 'infra_ai', label: 'AI Compute', type: 'infrastructure', icon: 'Zap', health: 94, stats: [{ label: 'GPU Util', value: '72%' }, { label: 'Tokens/day', value: '14.2M' }] },
           ],
         },
       ],
@@ -103,7 +103,7 @@ export function DigitalTwinEngine() {
             <span className="w-3.5 shrink-0" />
           )}
 
-          <span className="text-sm shrink-0">{node.icon}</span>
+          <IconRenderer name={node.icon} className="w-3.5 h-3.5 shrink-0 text-gray-300" />
           <span className={`text-xs font-semibold ${isSelected ? 'text-white' : 'text-[#a6a6a6] group-hover:text-white'}`}>
             {node.label}
           </span>
@@ -145,7 +145,7 @@ export function DigitalTwinEngine() {
             {selectedNode ? (
               <>
                 <div className="flex items-center gap-3 border-b border-[#262626] pb-3">
-                  <span className="text-2xl">{selectedNode.icon}</span>
+                  <IconRenderer name={selectedNode.icon} className="w-6 h-6 text-white" />
                   <div>
                     <div className="font-bold text-white text-sm">{selectedNode.label}</div>
                     <div className="flex items-center gap-1.5 mt-0.5">
@@ -182,7 +182,7 @@ export function DigitalTwinEngine() {
                         onClick={() => { setSelectedNode(child); setExpanded(prev => ({ ...prev, [selectedNode.id]: true })); }}
                         className="w-full flex items-center gap-2 bg-[#0f0f0f] border border-[#262626] rounded-lg p-2.5 text-xs hover:border-[#333] transition-all"
                       >
-                        <span>{child.icon}</span>
+                        <IconRenderer name={child.icon} className="w-3.5 h-3.5" />
                         <span className="text-white font-semibold">{child.label}</span>
                         <span className={`ml-auto text-[9px] font-mono font-bold ${
                           child.health >= 95 ? 'text-green-400' : child.health >= 80 ? 'text-amber-400' : 'text-red-400'
@@ -204,7 +204,7 @@ export function DigitalTwinEngine() {
                       ? `${selectedNode.label} is operating within normal parameters. No risks detected.`
                       : selectedNode.health >= 80
                         ? `${selectedNode.label} shows signs of degradation. Recommend investigating latency patterns and resource utilization.`
-                        : `⚠️ ${selectedNode.label} is in a critical state. Immediate investigation required. Check dependencies and recent changes.`
+                        : `AlertTriangle ${selectedNode.label} is in a critical state. Immediate investigation required. Check dependencies and recent changes.`
                     }
                   </div>
                 </div>

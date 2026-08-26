@@ -1,5 +1,5 @@
 "use client";
-
+import { IconRenderer } from '@/components/ui/IconRenderer';
 import React, { useState } from 'react';
 import {
   GripVertical, X, Pin, Maximize2, Minimize2, Copy,
@@ -37,11 +37,11 @@ const PANEL_PREVIEWS: Record<string, { lines: string[]; accent: string }> = {
   task_board: { lines: ['Backlog (3) │ In Progress (5) │ Review (2) │ Done (12)', '┌─────────┐ ┌──────────────┐ ┌────────┐ ┌──────┐', '│ Redesign │ │ Fix Webhook  │ │ Email  │ │ ✓    │', '│ Pricing  │ │ Investigate  │ │ Seq.   │ │ Done │', '─── 22 tasks │ 4 critical │ 2 overdue'], accent: 'bg-amber-500/10 text-amber-400' },
   timeline: { lines: ['09:00 ── Mission created', '09:05 ── AI agents assigned (3)', '10:00 ── Initial analysis complete ✓', '10:45 ── Root cause identified ✓', '11:30 ── Fix implementation ◉ In Progress'], accent: 'bg-cyan-500/10 text-cyan-400' },
   ecosystem_kpi: { lines: ['Applications: 12 (+2)  │  Organizations: 4', 'Users: 2,493 (+12%)   │  AI Agents: 38 (+5)', 'Automations: 91 (+8%) │  Events Today: 12M', 'Platform Uptime: 99.99% │ SLA: Met', '─── All Systems Nominal'], accent: 'bg-indigo-500/10 text-indigo-400' },
-  digital_twin: { lines: ['🌐 Enterprise Ecosystem ─── 98%', '  🏢 OLADIZZ Corp ─── 98%', '    📊 Analytics Pro ─── 99%', '    🤝 CRM Engine ─── 92% ⚠', '    🖥️ Infrastructure ─── 99%'], accent: 'bg-pink-500/10 text-pink-400' },
+  digital_twin: { lines: ['Globe Enterprise Ecosystem ─── 98%', '  Building OLADIZZ Corp ─── 98%', '    BarChart2 Analytics Pro ─── 99%', '    Handshake CRM Engine ─── 92% ⚠', '    Monitor Infrastructure ─── 99%'], accent: 'bg-pink-500/10 text-pink-400' },
   notes: { lines: ['# Investigation Notes — Q2 Revenue', '- Revenue dropped 18% in SMB segment', '- Correlates with onboarding email changes in March', '- Action: Restore original welcome sequence', '─── Last edited: 2 mins ago'], accent: 'bg-[#333]/30 text-[#a6a6a6]' },
   approval_chain: { lines: ['Created ✓ → AI Summary ✓ → Manager ◉ → Finance ○ → Done ○', 'Stage: Manager Approval (pending)', 'AI Summary: Duplicate charge confirmed, $149.99 refund recommended', 'Confidence: 95% │ Risk: Low', '─── Waiting for Sarah Chen'], accent: 'bg-green-500/10 text-green-400' },
-  agent_registry: { lines: ['📊 Analytics AI ─── Running │ 142 decisions │ $12.40', '💰 Finance AI ─── Paused │ 38 decisions │ $8.20', '🎧 Support AI ─── Busy │ 89 decisions │ $4.60', '💻 Developer AI ─── Idle │ 24 decisions │ $6.80', '─── 8 agents │ 6 active │ $64.50 today'], accent: 'bg-purple-500/10 text-purple-400' },
-  security_alert: { lines: ['🔴 CRITICAL │ Credential stuffing from 45.33.x.x │ Resolved', '🟠 HIGH │ Admin role assigned to new user │ Unresolved', '🟠 HIGH │ Unusual API key usage pattern │ Unresolved', '🟡 MEDIUM │ 14 failed login attempts │ Resolved', '─── 2 unresolved │ 3 resolved │ Score: 100%'], accent: 'bg-red-500/10 text-red-400' },
+  agent_registry: { lines: ['BarChart2 Analytics AI ─── Running │ 142 decisions │ $12.40', 'CircleDollarSign Finance AI ─── Paused │ 38 decisions │ $8.20', 'Headphones Support AI ─── Busy │ 89 decisions │ $4.60', 'Laptop Developer AI ─── Idle │ 24 decisions │ $6.80', '─── 8 agents │ 6 active │ $64.50 today'], accent: 'bg-purple-500/10 text-purple-400' },
+  security_alert: { lines: ['AlertCircle CRITICAL │ Credential stuffing from 45.33.x.x │ Resolved', '🟠 HIGH │ Admin role assigned to new user │ Unresolved', '🟠 HIGH │ Unusual API key usage pattern │ Unresolved', '🟡 MEDIUM │ 14 failed login attempts │ Resolved', '─── 2 unresolved │ 3 resolved │ Score: 100%'], accent: 'bg-red-500/10 text-red-400' },
 };
 
 export function ActiveCanvas({ panels, definitions, onClosePanel, onPinPanel, onMaximizePanel, onDuplicatePanel }: Props) {
@@ -86,7 +86,7 @@ export function ActiveCanvas({ panels, definitions, onClosePanel, onPinPanel, on
             {/* Title Bar */}
             <div className="flex items-center gap-2 px-3 py-1.5 bg-[#0f0f0f] border-b border-[#262626] shrink-0 group">
               <GripVertical className="w-3 h-3 text-[#333] cursor-grab active:cursor-grabbing shrink-0" />
-              <span className="text-sm shrink-0">{def.icon}</span>
+              <IconRenderer name={def.icon} className="w-4 h-4 shrink-0 text-white" />
               <span className="text-[11px] font-semibold text-white truncate">{def.title}</span>
               <span className="text-[8px] text-[#656565] bg-[#1a1a1a] px-1.5 py-0.5 rounded border border-[#262626] font-mono shrink-0 hidden lg:inline">{def.toolOrigin}</span>
 

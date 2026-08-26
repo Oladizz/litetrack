@@ -5,6 +5,7 @@ import {
   Pin, Clock, Star, FolderOpen, Search as SearchIcon, Bot,
   ChevronDown, ChevronRight, Plus, PanelLeftClose, PanelLeft
 } from 'lucide-react';
+import { IconRenderer } from '@/components/ui/IconRenderer';
 import { NavItem, NavSection } from './types';
 
 interface Props {
@@ -94,7 +95,7 @@ export function WorkspaceNavigator({ navItems, activeWorkspaceId, onSelectItem, 
                           : 'text-[#a6a6a6] hover:text-white hover:bg-[#1a1a1a] border-l-2 border-transparent'
                       }`}
                     >
-                      <span className="text-sm shrink-0">{item.icon}</span>
+                      <IconRenderer name={item.icon} className="w-4 h-4 shrink-0 text-[#a6a6a6]" />
                       <span className="truncate font-medium">{item.label}</span>
                       {item.badge && (
                         <span className="ml-auto text-[8px] bg-[#2266ec] text-white px-1.5 py-0.5 rounded-full font-bold shrink-0">{item.badge}</span>

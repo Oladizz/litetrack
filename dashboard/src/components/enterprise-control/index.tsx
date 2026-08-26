@@ -23,13 +23,13 @@ export function UniversalEnterpriseControl() {
 
   // === Section 1: Ecosystem KPIs ===
   const kpis: EcosystemKPI[] = [
-    { label: 'Applications', value: '12', icon: '📱', trend: '+2 this month', trendDirection: 'up' },
-    { label: 'Organizations', value: '4', icon: '🏢', trend: 'Stable', trendDirection: 'neutral' },
-    { label: 'Users', value: '2,493', icon: '👤', trend: '+12%', trendDirection: 'up' },
-    { label: 'AI Agents', value: '38', icon: '🤖', trend: '+5 this week', trendDirection: 'up' },
-    { label: 'Automations', value: '91', icon: '⚡', trend: '+8%', trendDirection: 'up' },
-    { label: 'Events Today', value: '12M', icon: '📊', trend: '+18%', trendDirection: 'up' },
-    { label: 'Uptime', value: '99.99%', icon: '🟢', trend: 'SLA Met', trendDirection: 'up' },
+    { label: 'Applications', value: '12', icon: 'Smartphone', trend: '+2 this month', trendDirection: 'up' },
+    { label: 'Organizations', value: '4', icon: 'Building', trend: 'Stable', trendDirection: 'neutral' },
+    { label: 'Users', value: '2,493', icon: 'User', trend: '+12%', trendDirection: 'up' },
+    { label: 'AI Agents', value: '38', icon: 'Bot', trend: '+5 this week', trendDirection: 'up' },
+    { label: 'Automations', value: '91', icon: 'Zap', trend: '+8%', trendDirection: 'up' },
+    { label: 'Events Today', value: '12M', icon: 'BarChart2', trend: '+18%', trendDirection: 'up' },
+    { label: 'Uptime', value: '99.99%', icon: 'CheckCircle', trend: 'SLA Met', trendDirection: 'up' },
   ];
 
   const health: HealthScore[] = [
@@ -41,26 +41,26 @@ export function UniversalEnterpriseControl() {
   ];
 
   const apps: AppSwitchboard[] = [
-    { id: 'sw_1', name: 'Analytics Pro', icon: '📊', health: 99, status: 'online', users: 340, aiAgents: 4, eventsToday: '3.2M' },
-    { id: 'sw_2', name: 'Admin OS', icon: '⚙️', health: 98, status: 'online', users: 82, aiAgents: 8, eventsToday: '1.4M' },
-    { id: 'sw_3', name: 'SchoolTrack', icon: '🎓', health: 97, status: 'online', users: 840, aiAgents: 3, eventsToday: '2.1M' },
-    { id: 'sw_4', name: 'CRM Engine', icon: '🤝', health: 92, status: 'degraded', users: 420, aiAgents: 5, eventsToday: '1.8M' },
-    { id: 'sw_5', name: 'InventoryHub', icon: '📦', health: 96, status: 'online', users: 180, aiAgents: 2, eventsToday: '680K' },
-    { id: 'sw_6', name: 'RepairDesk', icon: '🔧', health: 88, status: 'degraded', users: 95, aiAgents: 2, eventsToday: '240K' },
-    { id: 'sw_7', name: 'BlockVault', icon: '⛓️', health: 78, status: 'degraded', users: 12, aiAgents: 1, eventsToday: '42K' },
-    { id: 'sw_8', name: 'SupportOS', icon: '💬', health: 99, status: 'online', users: 524, aiAgents: 4, eventsToday: '1.9M' },
+    { id: 'sw_1', name: 'Analytics Pro', icon: 'BarChart2', health: 99, status: 'online', users: 340, aiAgents: 4, eventsToday: '3.2M' },
+    { id: 'sw_2', name: 'Admin OS', icon: 'Settings', health: 98, status: 'online', users: 82, aiAgents: 8, eventsToday: '1.4M' },
+    { id: 'sw_3', name: 'SchoolTrack', icon: 'GraduationCap', health: 97, status: 'online', users: 840, aiAgents: 3, eventsToday: '2.1M' },
+    { id: 'sw_4', name: 'CRM Engine', icon: 'Handshake', health: 92, status: 'degraded', users: 420, aiAgents: 5, eventsToday: '1.8M' },
+    { id: 'sw_5', name: 'InventoryHub', icon: 'Package', health: 96, status: 'online', users: 180, aiAgents: 2, eventsToday: '680K' },
+    { id: 'sw_6', name: 'RepairDesk', icon: 'Wrench', health: 88, status: 'degraded', users: 95, aiAgents: 2, eventsToday: '240K' },
+    { id: 'sw_7', name: 'BlockVault', icon: 'Link2', health: 78, status: 'degraded', users: 12, aiAgents: 1, eventsToday: '42K' },
+    { id: 'sw_8', name: 'SupportOS', icon: 'MessageSquare', health: 99, status: 'online', users: 524, aiAgents: 4, eventsToday: '1.9M' },
   ];
 
   // === Section 2: AI Fleet ===
   const [aiAgents, setAiAgents] = useState<AIFleetAgent[]>([
-    { id: 'fleet_1', name: 'Analytics AI', avatar: '📊', status: 'running', model: 'Gemini 2.5 Pro', activeTask: 'Generating Q2 churn cohort analysis', decisionsToday: 142, tokenCostUsd: 12.40, autonomyLevel: 'operator' },
-    { id: 'fleet_2', name: 'Finance AI', avatar: '💰', status: 'paused', model: 'Gemini 2.5 Pro', activeTask: 'Monthly reconciliation paused', decisionsToday: 38, tokenCostUsd: 8.20, autonomyLevel: 'advisor' },
-    { id: 'fleet_3', name: 'Support AI', avatar: '🎧', status: 'busy', model: 'Gemini 2.5 Flash', activeTask: 'Processing 12 open tickets', decisionsToday: 89, tokenCostUsd: 4.60, autonomyLevel: 'autonomous' },
-    { id: 'fleet_4', name: 'Developer AI', avatar: '💻', status: 'idle', model: 'Gemini 2.5 Pro', activeTask: 'Awaiting assignment', decisionsToday: 24, tokenCostUsd: 6.80, autonomyLevel: 'operator' },
-    { id: 'fleet_5', name: 'Marketing AI', avatar: '📢', status: 'running', model: 'Gemini 2.5 Flash', activeTask: 'Analyzing campaign performance', decisionsToday: 56, tokenCostUsd: 3.40, autonomyLevel: 'advisor' },
-    { id: 'fleet_6', name: 'Security AI', avatar: '🔒', status: 'running', model: 'Gemini 2.5 Pro', activeTask: 'Continuous threat monitoring', decisionsToday: 210, tokenCostUsd: 14.20, autonomyLevel: 'autonomous' },
-    { id: 'fleet_7', name: 'Sales AI', avatar: '💼', status: 'running', model: 'Gemini 2.5 Flash', activeTask: 'Scoring 2,891 leads', decisionsToday: 2891, tokenCostUsd: 9.80, autonomyLevel: 'operator' },
-    { id: 'fleet_8', name: 'Education AI', avatar: '📚', status: 'running', model: 'Gemini 2.5 Flash', activeTask: 'Grading 430 assessments', decisionsToday: 430, tokenCostUsd: 5.10, autonomyLevel: 'advisor' },
+    { id: 'fleet_1', name: 'Analytics AI', avatar: 'BarChart2', status: 'running', model: 'Gemini 2.5 Pro', activeTask: 'Generating Q2 churn cohort analysis', decisionsToday: 142, tokenCostUsd: 12.40, autonomyLevel: 'operator' },
+    { id: 'fleet_2', name: 'Finance AI', avatar: 'CircleDollarSign', status: 'paused', model: 'Gemini 2.5 Pro', activeTask: 'Monthly reconciliation paused', decisionsToday: 38, tokenCostUsd: 8.20, autonomyLevel: 'advisor' },
+    { id: 'fleet_3', name: 'Support AI', avatar: 'Headphones', status: 'busy', model: 'Gemini 2.5 Flash', activeTask: 'Processing 12 open tickets', decisionsToday: 89, tokenCostUsd: 4.60, autonomyLevel: 'autonomous' },
+    { id: 'fleet_4', name: 'Developer AI', avatar: 'Laptop', status: 'idle', model: 'Gemini 2.5 Pro', activeTask: 'Awaiting assignment', decisionsToday: 24, tokenCostUsd: 6.80, autonomyLevel: 'operator' },
+    { id: 'fleet_5', name: 'Marketing AI', avatar: 'Megaphone', status: 'running', model: 'Gemini 2.5 Flash', activeTask: 'Analyzing campaign performance', decisionsToday: 56, tokenCostUsd: 3.40, autonomyLevel: 'advisor' },
+    { id: 'fleet_6', name: 'Security AI', avatar: 'Lock', status: 'running', model: 'Gemini 2.5 Pro', activeTask: 'Continuous threat monitoring', decisionsToday: 210, tokenCostUsd: 14.20, autonomyLevel: 'autonomous' },
+    { id: 'fleet_7', name: 'Sales AI', avatar: 'Briefcase', status: 'running', model: 'Gemini 2.5 Flash', activeTask: 'Scoring 2,891 leads', decisionsToday: 2891, tokenCostUsd: 9.80, autonomyLevel: 'operator' },
+    { id: 'fleet_8', name: 'Education AI', avatar: 'BookOpen', status: 'running', model: 'Gemini 2.5 Flash', activeTask: 'Grading 430 assessments', decisionsToday: 430, tokenCostUsd: 5.10, autonomyLevel: 'advisor' },
   ]);
 
   const governance: AIGovernanceEntry[] = [
@@ -81,22 +81,22 @@ export function UniversalEnterpriseControl() {
   ]);
 
   const [disasters, setDisasters] = useState<DisasterControl[]>([
-    { id: 'dis_1', label: 'Disable All AI Agents', description: 'Immediately halt all AI agent operations across all applications.', icon: '🤖', severity: 'critical', active: false },
-    { id: 'dis_2', label: 'Lock All Logins', description: 'Block all user authentication. Only Super Admins can access.', icon: '🔒', severity: 'critical', active: false },
-    { id: 'dis_3', label: 'Rotate API Keys', description: 'Invalidate and regenerate all production API keys.', icon: '🔑', severity: 'high', active: false },
-    { id: 'dis_4', label: 'Maintenance Mode', description: 'Show maintenance page to all users. Disable all writes.', icon: '🚧', severity: 'high', active: false },
-    { id: 'dis_5', label: 'Freeze Billing', description: 'Pause all billing operations, subscriptions, and charges.', icon: '💳', severity: 'medium', active: false },
-    { id: 'dis_6', label: 'Pause All Automations', description: 'Halt all automated workflows, triggers, and scheduled jobs.', icon: '⏸️', severity: 'medium', active: false },
+    { id: 'dis_1', label: 'Disable All AI Agents', description: 'Immediately halt all AI agent operations across all applications.', icon: 'Bot', severity: 'critical', active: false },
+    { id: 'dis_2', label: 'Lock All Logins', description: 'Block all user authentication. Only Super Admins can access.', icon: 'Lock', severity: 'critical', active: false },
+    { id: 'dis_3', label: 'Rotate API Keys', description: 'Invalidate and regenerate all production API keys.', icon: 'Key', severity: 'high', active: false },
+    { id: 'dis_4', label: 'Maintenance Mode', description: 'Show maintenance page to all users. Disable all writes.', icon: 'Construction', severity: 'high', active: false },
+    { id: 'dis_5', label: 'Freeze Billing', description: 'Pause all billing operations, subscriptions, and charges.', icon: 'CreditCard', severity: 'medium', active: false },
+    { id: 'dis_6', label: 'Pause All Automations', description: 'Halt all automated workflows, triggers, and scheduled jobs.', icon: 'PauseCircle', severity: 'medium', active: false },
   ]);
 
   // === Section 4: Costs & Orgs ===
   const costs: CostBreakdown[] = [
-    { category: 'AI Models', icon: '🤖', costUsd: 64.50, budgetUsd: 80.00, trend: 12 },
-    { category: 'Database & Storage', icon: '🗄️', costUsd: 42.10, budgetUsd: 60.00, trend: 3 },
-    { category: 'Compute & Cloud Run', icon: '☁️', costUsd: 32.30, budgetUsd: 50.00, trend: -2 },
-    { category: 'API & Third-Party', icon: '🔌', costUsd: 18.40, budgetUsd: 25.00, trend: 8 },
-    { category: 'CDN & Bandwidth', icon: '🌐', costUsd: 12.80, budgetUsd: 20.00, trend: -5 },
-    { category: 'Support & Tooling', icon: '🛠️', costUsd: 8.20, budgetUsd: 15.00, trend: 0 },
+    { category: 'AI Models', icon: 'Bot', costUsd: 64.50, budgetUsd: 80.00, trend: 12 },
+    { category: 'Database & Storage', icon: 'Database', costUsd: 42.10, budgetUsd: 60.00, trend: 3 },
+    { category: 'Compute & Cloud Run', icon: 'Cloud', costUsd: 32.30, budgetUsd: 50.00, trend: -2 },
+    { category: 'API & Third-Party', icon: 'Plug', costUsd: 18.40, budgetUsd: 25.00, trend: 8 },
+    { category: 'CDN & Bandwidth', icon: 'Globe', costUsd: 12.80, budgetUsd: 20.00, trend: -5 },
+    { category: 'Support & Tooling', icon: 'Tool', costUsd: 8.20, budgetUsd: 15.00, trend: 0 },
   ];
 
   const organizations: Organization[] = [
@@ -108,12 +108,12 @@ export function UniversalEnterpriseControl() {
 
   // === Section 5: Briefing ===
   const briefingItems: BriefingItem[] = [
-    { icon: '📈', message: 'Revenue increased 8% month-over-month. Total MRR is now $66,590 across 4 organizations.', type: 'positive' },
-    { icon: '⚠️', message: 'Two AI agents (Finance AI, Analytics AI) exceeded their daily token budget this week. Combined overage: $14.20.', type: 'warning' },
-    { icon: '🔴', message: 'CRM Engine has elevated error rates (0.08%) — 4× above baseline. Root cause: unindexed query on contacts table.', type: 'warning' },
-    { icon: '🛡️', message: 'Three critical security alerts need review: credential stuffing attempt (resolved), suspicious API key usage, and unauthorized admin role assignment.', type: 'warning' },
-    { icon: '✅', message: 'Support resolution time improved 11% this week. Support AI resolved 89 tickets autonomously with 96% satisfaction.', type: 'positive' },
-    { icon: '🎓', message: 'SchoolTrack onboarded 420 new students this week. Education AI graded 430 assessments with 99.2% accuracy.', type: 'positive' },
+    { icon: 'TrendingUp', message: 'Revenue increased 8% month-over-month. Total MRR is now $66,590 across 4 organizations.', type: 'positive' },
+    { icon: 'AlertTriangle', message: 'Two AI agents (Finance AI, Analytics AI) exceeded their daily token budget this week. Combined overage: $14.20.', type: 'warning' },
+    { icon: 'AlertCircle', message: 'CRM Engine has elevated error rates (0.08%) — 4× above baseline. Root cause: unindexed query on contacts table.', type: 'warning' },
+    { icon: 'Shield', message: 'Three critical security alerts need review: credential stuffing attempt (resolved), suspicious API key usage, and unauthorized admin role assignment.', type: 'warning' },
+    { icon: 'CheckCircle2', message: 'Support resolution time improved 11% this week. Support AI resolved 89 tickets autonomously with 96% satisfaction.', type: 'positive' },
+    { icon: 'GraduationCap', message: 'SchoolTrack onboarded 420 new students this week. Education AI graded 430 assessments with 99.2% accuracy.', type: 'positive' },
   ];
 
   // === Handlers ===

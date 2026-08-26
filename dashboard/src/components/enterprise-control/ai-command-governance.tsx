@@ -1,5 +1,5 @@
 "use client";
-
+import { IconRenderer } from '@/components/ui/IconRenderer';
 import React, { useState } from 'react';
 import {
   Bot, Play, Pause, RotateCcw, ArrowUpCircle, Brain, Eye,
@@ -63,7 +63,7 @@ export function AICommandGovernance({ agents, governance, onAgentAction }: Props
               <div key={agent.id} className="bg-[#121212] border border-[#262626] rounded-xl p-4 space-y-3 transition-all">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-lg">{agent.avatar}</span>
+                    <IconRenderer name={agent.avatar} className="w-5 h-5 text-gray-400" />
                     <div>
                       <div className="font-bold text-white text-xs">{agent.name}</div>
                       <div className="text-[9px] text-[#656565] font-mono">{agent.model}</div>

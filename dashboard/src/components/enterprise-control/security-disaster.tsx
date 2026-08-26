@@ -1,5 +1,5 @@
 "use client";
-
+import { IconRenderer } from '@/components/ui/IconRenderer';
 import React, { useState } from 'react';
 import {
   Shield, AlertTriangle, Lock, Key, Server, Pause, Power, RotateCcw,
@@ -110,7 +110,7 @@ export function SecurityDisasterCenter({ securityEvents, disasterControls, onRes
               }`}
             >
               <div className="flex items-center justify-between">
-                <span className="text-xl">{ctrl.icon}</span>
+                <IconRenderer name={ctrl.icon} className="w-5 h-5 text-gray-400" />
                 <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold ${
                   ctrl.active ? 'bg-red-500/20 text-red-400 animate-pulse' : 'bg-[#333]/30 text-[#656565]'
                 }`}>

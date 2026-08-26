@@ -1,5 +1,5 @@
 "use client";
-
+import { IconRenderer } from '@/components/ui/IconRenderer';
 import React, { useState } from 'react';
 import {
   Sparkles, Sun, TrendingUp, AlertTriangle, Check, ChevronRight,
@@ -76,7 +76,7 @@ export function ExecutiveBriefingAI({ briefingItems }: Props) {
             const style = ITEM_STYLES[item.type];
             return (
               <div key={i} className={`flex items-start gap-3 p-3 rounded-xl ${style.bg} border border-transparent`}>
-                <span className="text-lg shrink-0 mt-0.5">{item.icon}</span>
+                <IconRenderer name={item.icon} className="w-4 h-4 shrink-0 mt-1" />
                 <span className={`text-xs leading-relaxed ${style.color}`}>{item.message}</span>
               </div>
             );

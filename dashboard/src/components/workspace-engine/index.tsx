@@ -14,24 +14,24 @@ import { toast } from '@/components/ui/toast';
 
 // === Panel Registry: All panels contributed by the 10 tools ===
 const PANEL_DEFINITIONS: PanelDefinition[] = [
-  { id: 'def_data_grid', type: 'data_grid', title: 'Data Grid', icon: '📊', toolOrigin: 'Data Manager', description: 'Tabular data view', defaultSize: 'lg', resizable: true, closable: true, floatable: true, duplicatable: true },
-  { id: 'def_chart', type: 'chart', title: 'Revenue Chart', icon: '📈', toolOrigin: 'Dashboard Builder', description: 'Interactive chart', defaultSize: 'md', resizable: true, closable: true, floatable: true, duplicatable: true },
-  { id: 'def_activity', type: 'activity_feed', title: 'Activity Feed', icon: '⚡', toolOrigin: 'Collaboration Hub', description: 'Universal activity stream', defaultSize: 'md', resizable: true, closable: true, floatable: true, duplicatable: false },
-  { id: 'def_ai_insight', type: 'ai_insight', title: 'AI Findings', icon: '🧠', toolOrigin: 'AI Agent Studio', description: 'AI-generated insights', defaultSize: 'md', resizable: true, closable: true, floatable: true, duplicatable: false },
-  { id: 'def_tasks', type: 'task_board', title: 'Task Board', icon: '✅', toolOrigin: 'Collaboration Hub', description: 'Kanban task board', defaultSize: 'lg', resizable: true, closable: true, floatable: true, duplicatable: false },
-  { id: 'def_timeline', type: 'timeline', title: 'Investigation Timeline', icon: '🕐', toolOrigin: 'Collaboration Hub', description: 'Event timeline', defaultSize: 'md', resizable: true, closable: true, floatable: true, duplicatable: true },
-  { id: 'def_ecosystem', type: 'ecosystem_kpi', title: 'Ecosystem KPIs', icon: '🌐', toolOrigin: 'Enterprise Control', description: 'Platform-wide KPIs', defaultSize: 'md', resizable: true, closable: true, floatable: true, duplicatable: false },
-  { id: 'def_twin', type: 'digital_twin', title: 'Digital Twin', icon: '🔮', toolOrigin: 'Enterprise Control', description: 'Live platform model', defaultSize: 'lg', resizable: true, closable: true, floatable: true, duplicatable: false },
-  { id: 'def_notes', type: 'notes', title: 'Notes', icon: '📝', toolOrigin: 'Collaboration Hub', description: 'Markdown notes', defaultSize: 'sm', resizable: true, closable: true, floatable: true, duplicatable: true },
-  { id: 'def_approvals', type: 'approval_chain', title: 'Approval Pipeline', icon: '🔐', toolOrigin: 'Collaboration Hub', description: 'Visual approval chain', defaultSize: 'md', resizable: true, closable: true, floatable: true, duplicatable: false },
-  { id: 'def_agents', type: 'agent_registry', title: 'AI Fleet', icon: '🤖', toolOrigin: 'AI Agent Studio', description: 'AI agent registry', defaultSize: 'md', resizable: true, closable: true, floatable: true, duplicatable: false },
-  { id: 'def_security', type: 'security_alert', title: 'Security Alerts', icon: '🛡️', toolOrigin: 'Enterprise Control', description: 'Security operations', defaultSize: 'md', resizable: true, closable: true, floatable: true, duplicatable: false },
+  { id: 'def_data_grid', type: 'data_grid', title: 'Data Grid', icon: 'BarChart2', toolOrigin: 'Data Manager', description: 'Tabular data view', defaultSize: 'lg', resizable: true, closable: true, floatable: true, duplicatable: true },
+  { id: 'def_chart', type: 'chart', title: 'Revenue Chart', icon: 'TrendingUp', toolOrigin: 'Dashboard Builder', description: 'Interactive chart', defaultSize: 'md', resizable: true, closable: true, floatable: true, duplicatable: true },
+  { id: 'def_activity', type: 'activity_feed', title: 'Activity Feed', icon: 'Zap', toolOrigin: 'Collaboration Hub', description: 'Universal activity stream', defaultSize: 'md', resizable: true, closable: true, floatable: true, duplicatable: false },
+  { id: 'def_ai_insight', type: 'ai_insight', title: 'AI Findings', icon: 'Brain', toolOrigin: 'AI Agent Studio', description: 'AI-generated insights', defaultSize: 'md', resizable: true, closable: true, floatable: true, duplicatable: false },
+  { id: 'def_tasks', type: 'task_board', title: 'Task Board', icon: 'CheckCircle2', toolOrigin: 'Collaboration Hub', description: 'Kanban task board', defaultSize: 'lg', resizable: true, closable: true, floatable: true, duplicatable: false },
+  { id: 'def_timeline', type: 'timeline', title: 'Investigation Timeline', icon: 'Clock', toolOrigin: 'Collaboration Hub', description: 'Event timeline', defaultSize: 'md', resizable: true, closable: true, floatable: true, duplicatable: true },
+  { id: 'def_ecosystem', type: 'ecosystem_kpi', title: 'Ecosystem KPIs', icon: 'Globe', toolOrigin: 'Enterprise Control', description: 'Platform-wide KPIs', defaultSize: 'md', resizable: true, closable: true, floatable: true, duplicatable: false },
+  { id: 'def_twin', type: 'digital_twin', title: 'Digital Twin', icon: 'Orbit', toolOrigin: 'Enterprise Control', description: 'Live platform model', defaultSize: 'lg', resizable: true, closable: true, floatable: true, duplicatable: false },
+  { id: 'def_notes', type: 'notes', title: 'Notes', icon: 'FileText', toolOrigin: 'Collaboration Hub', description: 'Markdown notes', defaultSize: 'sm', resizable: true, closable: true, floatable: true, duplicatable: true },
+  { id: 'def_approvals', type: 'approval_chain', title: 'Approval Pipeline', icon: 'Lock', toolOrigin: 'Collaboration Hub', description: 'Visual approval chain', defaultSize: 'md', resizable: true, closable: true, floatable: true, duplicatable: false },
+  { id: 'def_agents', type: 'agent_registry', title: 'AI Fleet', icon: 'Bot', toolOrigin: 'AI Agent Studio', description: 'AI agent registry', defaultSize: 'md', resizable: true, closable: true, floatable: true, duplicatable: false },
+  { id: 'def_security', type: 'security_alert', title: 'Security Alerts', icon: 'Shield', toolOrigin: 'Enterprise Control', description: 'Security operations', defaultSize: 'md', resizable: true, closable: true, floatable: true, duplicatable: false },
 ];
 
 // === Pre-assembled Workspaces ===
 const DEFAULT_WORKSPACES: Workspace[] = [
   {
-    id: 'ws_revenue', title: 'Investigate Revenue Drop', description: 'Q2 SMB churn investigation workspace', icon: '🔍',
+    id: 'ws_revenue', title: 'Investigate Revenue Drop', description: 'Q2 SMB churn investigation workspace', icon: 'Search',
     status: 'active',
     panels: [
       { id: 'p1', definitionId: 'def_data_grid', position: { x: 0, y: 0 }, size: { width: 600, height: 400 }, state: 'docked', zIndex: 1, isPinned: false },
@@ -43,7 +43,7 @@ const DEFAULT_WORKSPACES: Workspace[] = [
     createdAt: '2 hours ago', lastAccessedAt: 'Just now', createdBy: 'ai',
   },
   {
-    id: 'ws_executive', title: 'Executive Overview', description: 'Daily executive command center', icon: '👑',
+    id: 'ws_executive', title: 'Executive Overview', description: 'Daily executive command center', icon: 'Crown',
     status: 'active',
     panels: [
       { id: 'p5', definitionId: 'def_ecosystem', position: { x: 0, y: 0 }, size: { width: 800, height: 300 }, state: 'docked', zIndex: 1, isPinned: true },
@@ -54,7 +54,7 @@ const DEFAULT_WORKSPACES: Workspace[] = [
     createdAt: 'Today 9:00 AM', lastAccessedAt: '30 mins ago', createdBy: 'user',
   },
   {
-    id: 'ws_security', title: 'Security Investigation', description: 'Investigating API key abuse and credential stuffing', icon: '🛡️',
+    id: 'ws_security', title: 'Security Investigation', description: 'Investigating API key abuse and credential stuffing', icon: 'Shield',
     status: 'active',
     panels: [
       { id: 'p8', definitionId: 'def_security', position: { x: 0, y: 0 }, size: { width: 600, height: 400 }, state: 'docked', zIndex: 1, isPinned: true },
@@ -64,7 +64,7 @@ const DEFAULT_WORKSPACES: Workspace[] = [
     createdAt: '4 hours ago', lastAccessedAt: '1 hour ago', createdBy: 'ai',
   },
   {
-    id: 'ws_tasks', title: 'Sprint Board', description: 'Current sprint task management', icon: '📋',
+    id: 'ws_tasks', title: 'Sprint Board', description: 'Current sprint task management', icon: 'ClipboardList',
     status: 'saved',
     panels: [
       { id: 'p10', definitionId: 'def_tasks', position: { x: 0, y: 0 }, size: { width: 1200, height: 600 }, state: 'docked', zIndex: 1, isPinned: false },
@@ -84,14 +84,14 @@ export function WorkspaceEngine() {
 
   // === Navigation Items ===
   const navItems: NavItem[] = [
-    { id: 'nav_1', label: 'Investigate Revenue Drop', icon: '🔍', section: 'pinned', workspaceId: 'ws_revenue' },
-    { id: 'nav_2', label: 'Executive Overview', icon: '👑', section: 'pinned', workspaceId: 'ws_executive' },
-    { id: 'nav_3', label: 'Security Investigation', icon: '🛡️', section: 'investigations', workspaceId: 'ws_security', badge: '2' },
-    { id: 'nav_4', label: 'Sprint Board', icon: '📋', section: 'recent', workspaceId: 'ws_tasks' },
-    { id: 'nav_5', label: 'Customer #C-4021', icon: '👤', section: 'recent' },
-    { id: 'nav_6', label: 'Q2 Dashboards', icon: '📈', section: 'favorites' },
-    { id: 'nav_7', label: 'Revenue Reports', icon: '💰', section: 'collections' },
-    { id: 'nav_8', label: 'AI Churn Analysis', icon: '🤖', section: 'ai_workspaces', workspaceId: 'ws_revenue' },
+    { id: 'nav_1', label: 'Investigate Revenue Drop', icon: 'Search', section: 'pinned', workspaceId: 'ws_revenue' },
+    { id: 'nav_2', label: 'Executive Overview', icon: 'Crown', section: 'pinned', workspaceId: 'ws_executive' },
+    { id: 'nav_3', label: 'Security Investigation', icon: 'Shield', section: 'investigations', workspaceId: 'ws_security', badge: '2' },
+    { id: 'nav_4', label: 'Sprint Board', icon: 'ClipboardList', section: 'recent', workspaceId: 'ws_tasks' },
+    { id: 'nav_5', label: 'Customer #C-4021', icon: 'User', section: 'recent' },
+    { id: 'nav_6', label: 'Q2 Dashboards', icon: 'TrendingUp', section: 'favorites' },
+    { id: 'nav_7', label: 'Revenue Reports', icon: 'CircleDollarSign', section: 'collections' },
+    { id: 'nav_8', label: 'AI Churn Analysis', icon: 'Bot', section: 'ai_workspaces', workspaceId: 'ws_revenue' },
   ];
 
   // === AI Lane Data ===
@@ -103,19 +103,19 @@ export function WorkspaceEngine() {
   ];
 
   const runningAgents: RunningAgent[] = [
-    { id: 'ra_1', name: 'Analytics AI', avatar: '📊', task: 'Generating Q2 cohort analysis', status: 'running', progress: 72 },
-    { id: 'ra_2', name: 'Security AI', avatar: '🔒', task: 'Continuous threat monitoring', status: 'running', progress: 0 },
-    { id: 'ra_3', name: 'Support AI', avatar: '🎧', task: 'Processing 12 open tickets', status: 'thinking', progress: 45 },
-    { id: 'ra_4', name: 'Finance AI', avatar: '💰', task: 'Monthly reconciliation', status: 'done', progress: 100 },
+    { id: 'ra_1', name: 'Analytics AI', avatar: 'BarChart2', task: 'Generating Q2 cohort analysis', status: 'running', progress: 72 },
+    { id: 'ra_2', name: 'Security AI', avatar: 'Lock', task: 'Continuous threat monitoring', status: 'running', progress: 0 },
+    { id: 'ra_3', name: 'Support AI', avatar: 'Headphones', task: 'Processing 12 open tickets', status: 'thinking', progress: 45 },
+    { id: 'ra_4', name: 'Finance AI', avatar: 'CircleDollarSign', task: 'Monthly reconciliation', status: 'done', progress: 100 },
   ];
 
   // === Dock Data ===
   const [dockItems, setDockItems] = useState<DockItem[]>([
-    { id: 'dock_1', label: 'Q2 Churn Report', icon: '📄', type: 'clipboard' },
-    { id: 'dock_2', label: 'Customer #C-4021', icon: '👤', type: 'pinned' },
-    { id: 'dock_3', label: 'Cohort Analysis', icon: '📊', type: 'ai_task', status: 'running', progress: 72 },
-    { id: 'dock_4', label: 'Export: Revenue.csv', icon: '📁', type: 'download', status: 'complete' },
-    { id: 'dock_5', label: '2 security alerts', icon: '🛡️', type: 'notification' },
+    { id: 'dock_1', label: 'Q2 Churn Report', icon: 'File', type: 'clipboard' },
+    { id: 'dock_2', label: 'Customer #C-4021', icon: 'User', type: 'pinned' },
+    { id: 'dock_3', label: 'Cohort Analysis', icon: 'BarChart2', type: 'ai_task', status: 'running', progress: 72 },
+    { id: 'dock_4', label: 'Export: Revenue.csv', icon: 'Folder', type: 'download', status: 'complete' },
+    { id: 'dock_5', label: '2 security alerts', icon: 'Shield', type: 'notification' },
   ]);
 
   // === Handlers ===
@@ -126,7 +126,7 @@ export function WorkspaceEngine() {
 
   const handleCreateWorkspace = useCallback(() => {
     const newWs: Workspace = {
-      id: `ws_new_${Date.now()}`, title: 'New Workspace', description: 'Empty workspace', icon: '📁',
+      id: `ws_new_${Date.now()}`, title: 'New Workspace', description: 'Empty workspace', icon: 'Folder',
       status: 'active', panels: [], context: { filters: {}, selection: [], scrollPositions: {}, aiContext: '', recentHistory: [] },
       createdAt: 'Just now', lastAccessedAt: 'Just now', createdBy: 'user',
     };

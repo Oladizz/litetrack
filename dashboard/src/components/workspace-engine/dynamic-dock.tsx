@@ -5,6 +5,7 @@ import {
   Clipboard, Pin, MousePointer, Cpu, Bot, Download,
   Bell, Check, AlertTriangle, Loader2, X
 } from 'lucide-react';
+import { IconRenderer } from '@/components/ui/IconRenderer';
 import { DockItem } from './types';
 
 interface Props {
@@ -50,7 +51,7 @@ export function DynamicDock({ items, onDismissItem }: Props) {
           className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-[#1a1a1a] border border-[#262626] text-[9px] text-[#a6a6a6] hover:text-white transition-colors shrink-0 group"
         >
           <span className="text-[#656565]">{TYPE_ICON[item.type]}</span>
-          <span className="text-xs">{item.icon}</span>
+          <IconRenderer name={item.icon} className="w-3.5 h-3.5" />
           <span className="font-medium max-w-[100px] truncate">{item.label}</span>
 
           {item.status && STATUS_ICON[item.status]}
