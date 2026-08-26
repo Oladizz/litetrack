@@ -35,8 +35,8 @@ export interface AdminSection {
   icon: string;         // emoji
   collection: string;   // Firestore collection name
   isAuthUsers?: boolean; // If true, fetches from Firebase Auth instead of Firestore
-  columns: ColumnDef[];
-  fields: FieldDef[];
+  columns?: ColumnDef[];
+  fields?: FieldDef[];
   defaultSort?: string;
 }
 

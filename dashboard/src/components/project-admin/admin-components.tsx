@@ -389,7 +389,7 @@ export function CollectionManager({
 
       <AdminDataTable
         rows={rows}
-        columns={section.columns}
+        columns={section.columns || []}
         onEdit={(row) => { setEditingRecord(row); setIsNew(false); }}
         onDelete={handleDelete}
         loading={loading}
@@ -398,7 +398,7 @@ export function CollectionManager({
 
       {editingRecord && (
         <RecordEditor
-          fields={section.fields}
+          fields={section.fields || []}
           record={editingRecord}
           onSave={handleSave}
           onClose={() => { setEditingRecord(null); setIsNew(false); }}

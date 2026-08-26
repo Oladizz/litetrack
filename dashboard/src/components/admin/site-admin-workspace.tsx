@@ -122,8 +122,8 @@ export function SiteAdminWorkspace() {
       lastUpdated: 'Just now',
       synced: true,
       breadcrumbs: [
-        { label: 'Admin OS', onClick: () => setActiveCollection(null) },
-        { label: 'Database', onClick: () => setActiveCollection(null) },
+        { label: 'Admin OS',  },
+        { label: 'Database',  },
         { label: activeCollection }
       ],
       columns: dynamicColumns,
