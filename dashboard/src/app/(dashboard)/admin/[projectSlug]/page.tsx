@@ -8,6 +8,7 @@ import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 
 import { THEMES } from '@/components/project-admin/theme-tokens';
+import { OladizzXyzWorkspace } from '@/components/project-admin/oladizz-workspace';
 
 export default function ProjectAdminPage() {
   const params = useParams();
@@ -36,15 +37,15 @@ export default function ProjectAdminPage() {
       
       {/* Left: Section Nav */}
       <div className={`w-56 shrink-0 flex flex-col z-10 ${theme.sidebar}`}>
-        <div className="p-4 border-b border-[#262626]">
-          <Link href="/admin" className="text-[11px] text-[#656565] hover:text-white flex items-center gap-1 mb-3 transition-colors">
+        <div className="p-4 border-b border-gray-500/20">
+          <Link href="/admin" className="text-[11px] text-[#656565] hover:text-white flex items-center gap-1 mb-3 transition-colors uppercase tracking-widest font-mono">
             <ChevronLeft className="w-3 h-3" /> All Projects
           </Link>
           <div className="flex items-center gap-2">
-            <span className="text-xl">{project.icon}</span>
+            <span className="text-2xl">{project.icon}</span>
             <div>
-              <div className="text-sm font-bold text-white">{project.name}</div>
-              <div className="text-[10px] text-[#656565] font-mono">{project.domain}</div>
+              <div className="font-bold text-sm tracking-wider uppercase">{project.name}</div>
+              <div className="text-[10px] opacity-50 font-mono">{project.domain}</div>
             </div>
           </div>
         </div>
@@ -63,19 +64,15 @@ export default function ProjectAdminPage() {
               <span className="text-lg">{sec.icon}</span> {sec.label}
             </button>
           ))}
+      {/* Right: Main Canvas */}
+      <div className="flex-1 overflow-y-auto p-8 z-10 custom-scrollbar">
+        <div className="max-w-5xl mx-auto">
+          {project.slug === 'oladizz-xyz' ? (
+            <OladizzXyzWorkspace sectionId={section.id} />
+          ) : (
+            <CollectionManager project={project} section={section} />
+          )}
         </div>
-
-        <div className="p-3 border-t border-[#262626]">
-          <div className="text-[10px] text-[#656565] font-mono">
-            Firebase: {project.firebase.projectId}
-            {project.firebase.databaseId && <><br />DB: {project.firebase.databaseId}</>}
-          </div>
-        </div>
-      </div>
-
-      {/* Right: Collection Manager */}
-      <div className="flex-1 overflow-y-auto p-8">
-        <CollectionManager project={project} section={section} />
       </div>
     </div>
   );
