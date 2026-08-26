@@ -84,3 +84,13 @@ export async function deleteDocument(projectId: string, collection: string, docI
   await db.collection(collection).doc(docId).delete();
   return { success: true, id: docId };
 }
+
+export async function getDocument(projectId: string, collection: string, docId: string, databaseId?: string) {
+  const app = await getProjectApp(projectId);
+  if (!app) throw new Error('Failed to initialize Firebase app for project: ' + projectId);
+  const db = databaseId ? getFirestore(app, databaseId) : getFirestore(app);
+  const docRef = db.collection(collection).doc(docId);
+  const snap = await docRef.get();
+  if (!snap.exists) return null;
+  return { id: snap.id, ...snap.data() };
+}

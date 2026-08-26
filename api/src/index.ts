@@ -330,7 +330,7 @@ app.delete('/api/admin/firebase/:siteId/firestore/:collection/:docId', async (c)
 // GENERIC PROJECT ADMIN CRUD ROUTES
 // These power the /admin/[projectSlug] panels
 // ═══════════════════════════════════════════════════════
-import { listCollection, createDocument, updateDocument, deleteDocument } from './project-admin-proxy';
+import { listCollection, createDocument, updateDocument, deleteDocument, getDocument } from './project-admin-proxy';
 
 // LIST all documents in a collection
 app.get('/api/project-admin/:projectId/:collection', async (c) => {
@@ -347,6 +347,22 @@ app.get('/api/project-admin/:projectId/:collection', async (c) => {
 });
 
 // CREATE a new document
+// GET a single document
+app.get('/api/project-admin/:projectId/:collection/:docId', async (c) => {
+  try {
+    const projectId = c.req.param('projectId');
+    const collection = c.req.param('collection');
+    const docId = c.req.param('docId');
+    const databaseId = c.req.query('databaseId') || undefined;
+    const doc = await getDocument(projectId, collection, docId, databaseId);
+    if (!doc) return c.json({ error: 'Document not found' }, 404);
+    return c.json({ data: doc });
+  } catch (error: any) {
+    console.error(`Project Admin GET doc error:`, error);
+    return c.json({ error: error.message }, 500);
+  }
+});
+
 app.post('/api/project-admin/:projectId/:collection', async (c) => {
   try {
     const projectId = c.req.param('projectId');
