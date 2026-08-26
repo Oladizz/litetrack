@@ -661,7 +661,7 @@ export default function Dashboard() {
               <SiteAdminWorkspace />
             </div>
           ) : (
-
+            <React.Fragment>
           
           {/* Active Filters */}
           {Object.keys(filters).length > 0 && (

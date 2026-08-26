@@ -325,3 +325,69 @@ app.delete('/api/admin/firebase/:siteId/firestore/:collection/:docId', async (c)
     return c.json({ error: error.message || 'Failed to delete document' }, 500);
   }
 });
+
+// ═══════════════════════════════════════════════════════
+// GENERIC PROJECT ADMIN CRUD ROUTES
+// These power the /admin/[projectSlug] panels
+// ═══════════════════════════════════════════════════════
+import { listCollection, createDocument, updateDocument, deleteDocument } from './project-admin-proxy';
+
+// LIST all documents in a collection
+app.get('/api/project-admin/:projectId/:collection', async (c) => {
+  try {
+    const projectId = c.req.param('projectId');
+    const collection = c.req.param('collection');
+    const databaseId = c.req.query('databaseId') || undefined;
+    const data = await listCollection(projectId, collection, databaseId);
+    return c.json({ data });
+  } catch (error: any) {
+    console.error(`Project Admin LIST error:`, error);
+    return c.json({ error: error.message }, 500);
+  }
+});
+
+// CREATE a new document
+app.post('/api/project-admin/:projectId/:collection', async (c) => {
+  try {
+    const projectId = c.req.param('projectId');
+    const collection = c.req.param('collection');
+    const databaseId = c.req.query('databaseId') || undefined;
+    const body = await c.req.json();
+    const result = await createDocument(projectId, collection, body, databaseId);
+    return c.json(result);
+  } catch (error: any) {
+    console.error(`Project Admin CREATE error:`, error);
+    return c.json({ error: error.message }, 500);
+  }
+});
+
+// UPDATE a document
+app.put('/api/project-admin/:projectId/:collection/:docId', async (c) => {
+  try {
+    const projectId = c.req.param('projectId');
+    const collection = c.req.param('collection');
+    const docId = c.req.param('docId');
+    const databaseId = c.req.query('databaseId') || undefined;
+    const body = await c.req.json();
+    const result = await updateDocument(projectId, collection, docId, body, databaseId);
+    return c.json(result);
+  } catch (error: any) {
+    console.error(`Project Admin UPDATE error:`, error);
+    return c.json({ error: error.message }, 500);
+  }
+});
+
+// DELETE a document
+app.delete('/api/project-admin/:projectId/:collection/:docId', async (c) => {
+  try {
+    const projectId = c.req.param('projectId');
+    const collection = c.req.param('collection');
+    const docId = c.req.param('docId');
+    const databaseId = c.req.query('databaseId') || undefined;
+    const result = await deleteDocument(projectId, collection, docId, databaseId);
+    return c.json(result);
+  } catch (error: any) {
+    console.error(`Project Admin DELETE error:`, error);
+    return c.json({ error: error.message }, 500);
+  }
+});

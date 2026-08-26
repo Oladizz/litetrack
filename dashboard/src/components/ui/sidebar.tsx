@@ -224,6 +224,10 @@ export function Sidebar() {
             <Globe className="w-4 h-4" /> Global Overview
           </Link>
           
+          <Link href="/admin" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/admin') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+            <Database className="w-4 h-4" /> Admin Panels
+          </Link>
+          
           <Link href="/settings" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/settings') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
             <Settings className="w-4 h-4" /> Settings
           </Link>
