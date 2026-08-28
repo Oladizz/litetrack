@@ -7,10 +7,19 @@ import { toast } from '@/components/ui/toast';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://litetrack-api-916484331446.us-central1.run.app';
 
-// ==========================================
-// ICON PICKER (Mimics IconPicker.tsx)
-// ==========================================
+import * as LucideIcons from 'lucide-react';
+
+const iconList = Object.keys(LucideIcons).filter(k => k !== 'createLucideIcon' && k !== 'default');
+
 function IconPicker({ value, onChange, theme }: { value: string, onChange: (v: string) => void, theme: any }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  
+  const filteredIcons = iconList.filter(i => i.toLowerCase().includes(search.toLowerCase())).slice(0, 100);
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const CurrentIcon = (LucideIcons as any)[value] || LucideIcons.Circle;
+
   return (
     <div className="relative">
        <label className={theme.label}>Icon / Image URL</label>
@@ -19,7 +28,7 @@ function IconPicker({ value, onChange, theme }: { value: string, onChange: (v: s
              {value && value.startsWith('http') ? (
                <img src={value} alt="icon" className="w-5 h-5 object-contain" />
              ) : (
-               <div className="text-[#00B2FF] text-xs font-bold text-center leading-none">{value ? value.substring(0,2).toUpperCase() : '?'}</div>
+               <CurrentIcon className="w-5 h-5 text-[#00B2FF]" />
              )}
           </div>
           <div className="flex-1">
@@ -28,10 +37,45 @@ function IconPicker({ value, onChange, theme }: { value: string, onChange: (v: s
                 value={value || ''} 
                 onChange={(e) => onChange(e.target.value)} 
                 className={theme.input}
-                placeholder="Icon name (e.g. Activity) or URL"
+                placeholder="Icon name or URL"
              />
+             <button 
+               type="button"
+               onClick={() => setIsOpen(!isOpen)} 
+               className="text-[11px] text-[#00B2FF] hover:underline flex items-center gap-1 mt-1 font-mono uppercase tracking-widest"
+             >
+                <span>{isOpen ? 'Close Library' : 'Browse Library'}</span>
+             </button>
           </div>
        </div>
+       
+       {isOpen && (
+         <div className="absolute top-full left-0 w-full md:w-80 z-50 bg-gray-900 border border-gray-700 rounded shadow-2xl mt-2 p-3 h-64 flex flex-col">
+            <input 
+               type="text" 
+               placeholder="Search icons..." 
+               className="w-full bg-black text-white text-sm p-2 mb-2 border border-gray-800 rounded focus:border-[#00B2FF] outline-none font-mono"
+               value={search}
+               onChange={e => setSearch(e.target.value)}
+            />
+            <div className="overflow-y-auto grid grid-cols-6 gap-2 p-1 custom-scrollbar">
+               {filteredIcons.map(iconName => {
+                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                 const IconCmp = (LucideIcons as any)[iconName];
+                 return (
+                   <button 
+                      key={iconName} 
+                      onClick={() => { onChange(iconName); setIsOpen(false); }}
+                      className="p-2 hover:bg-[#00B2FF]/20 rounded flex items-center justify-center transition-colors border border-transparent hover:border-[#00B2FF]/30"
+                      title={iconName}
+                   >
+                      <IconCmp className="w-4 h-4 text-gray-400 hover:text-white" />
+                   </button>
+                 )
+               })}
+            </div>
+         </div>
+       )}
     </div>
   );
 }
@@ -181,7 +225,7 @@ export function OladizzXyzWorkspace({
   // ARRANGE SECTIONS (OrderingEditor.tsx)
   // ==========================================
   if (sectionId === 'ordering') {
-    const items = data.order || [];
+    const items = data.sectionOrder || [];
     const hidden = data.hiddenSections || [];
 
     const move = (index: number, direction: number) => {
@@ -190,7 +234,7 @@ export function OladizzXyzWorkspace({
         const temp = newItems[index];
         newItems[index] = newItems[index + direction];
         newItems[index + direction] = temp;
-        setData({ ...data, order: newItems });
+        setData({ ...data, sectionOrder: newItems });
     };
 
     const toggleHidden = (sectionName: string) => {
@@ -227,7 +271,7 @@ export function OladizzXyzWorkspace({
                 );
             })}
         </div>
-        <button onClick={() => handleSaveMultiple({ order: data.order, hiddenSections: data.hiddenSections })} className={theme.primaryButton + " flex items-center gap-2 mt-6"}>
+        <button onClick={() => handleSaveMultiple({ sectionOrder: data.sectionOrder, hiddenSections: data.hiddenSections })} className={theme.primaryButton + " flex items-center gap-2 mt-6"}>
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} SAVE ORDER
         </button>
       </div>
