@@ -79,3 +79,35 @@ export async function sendHourlySummary(chatId: string) {
     console.error(e);
   }
 }
+
+export async function getDailySummaryText() {
+  const query = `
+    SELECT 
+      s.name as project,
+      COUNT(DISTINCT e.visitor_id) as visitors,
+      COUNT(e.event_id) as pageviews,
+      APPROX_TOP_COUNT(e.country, 1)[OFFSET(0)].value as top_country
+    FROM \`${DATASET}.events\` e
+    JOIN \`${DATASET}.sites\` s ON e.site_id = s.site_id
+    WHERE e.timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 24 HOUR)
+    GROUP BY s.name
+  `;
+  
+  try {
+    const [rows] = await bq.query({ query });
+    if (rows.length === 0) return "📭 No traffic in the last 24 hours.";
+
+    let message = "📊 <b>Daily LiteTrack Summary</b>\n\n";
+    rows.forEach((r: any) => {
+      message += `<b>${r.project}</b>\n`;
+      message += `• Visitors: ${r.visitors}\n`;
+      message += `• Pageviews: ${r.pageviews}\n`;
+      message += `• Top Location: ${r.top_country || 'Unknown'}\n\n`;
+    });
+
+    return message;
+  } catch(e: any) {
+    console.error(e);
+    return `❌ Error: ${e.message}`;
+  }
+}

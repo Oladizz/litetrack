@@ -11,10 +11,13 @@
 import { initializeApp, getApps, getApp, App, applicationDefault } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 
-// Cache of initialized Firebase Admin apps by projectId+databaseId
+import { cert } from 'firebase-admin/app';
+import { getSites } from './stats';
+
+// Cache of initialized Firebase Admin apps by projectId
 const projectAppCache: Record<string, App> = {};
 
-function getProjectApp(projectId: string): App {
+async function getProjectApp(projectId: string): Promise<App> {
   const cacheKey = projectId;
   
   if (projectAppCache[cacheKey]) {
@@ -29,8 +32,23 @@ function getProjectApp(projectId: string): App {
     return app;
   }
 
+  // Look up credentials from sites table
+  const sites = await getSites();
+  const site = sites.find(s => {
+    const conf = typeof s.firebase_config === 'string' ? JSON.parse(s.firebase_config) : s.firebase_config;
+    return conf && conf.project_id === projectId;
+  });
+
+  let credential = applicationDefault();
+  if (site && site.firebase_config) {
+    const conf = typeof site.firebase_config === 'string' ? JSON.parse(site.firebase_config) : site.firebase_config;
+    if (conf.private_key) {
+      credential = cert(conf);
+    }
+  }
+
   const app = initializeApp({
-    credential: applicationDefault(),
+    credential,
     projectId,
   }, appName);
 
@@ -38,8 +56,8 @@ function getProjectApp(projectId: string): App {
   return app;
 }
 
-function getDb(projectId: string, databaseId?: string) {
-  const app = getProjectApp(projectId);
+async function getDb(projectId: string, databaseId?: string) {
+  const app = await getProjectApp(projectId);
   return databaseId ? getFirestore(app, databaseId) : getFirestore(app);
 }
 
@@ -48,7 +66,7 @@ function getDb(projectId: string, databaseId?: string) {
 // ═══════════════════════════════════════════════════════
 
 export async function listCollection(projectId: string, collection: string, databaseId?: string, limit = 100) {
-  const db = getDb(projectId, databaseId);
+  const db = await getDb(projectId, databaseId);
   const snapshot = await db.collection(collection).limit(limit).get();
   const data: any[] = [];
   snapshot.forEach(doc => {
@@ -58,7 +76,7 @@ export async function listCollection(projectId: string, collection: string, data
 }
 
 export async function createDocument(projectId: string, collection: string, data: any, databaseId?: string) {
-  const db = getDb(projectId, databaseId);
+  const db = await getDb(projectId, databaseId);
   const { id, ...cleanData } = data;
   cleanData.createdAt = new Date().toISOString();
   
@@ -72,7 +90,7 @@ export async function createDocument(projectId: string, collection: string, data
 }
 
 export async function updateDocument(projectId: string, collection: string, docId: string, data: any, databaseId?: string) {
-  const db = getDb(projectId, databaseId);
+  const db = await getDb(projectId, databaseId);
   const { id, ...cleanData } = data;
   cleanData.updatedAt = new Date().toISOString();
   await db.collection(collection).doc(docId).update(cleanData);
@@ -80,7 +98,7 @@ export async function updateDocument(projectId: string, collection: string, docI
 }
 
 export async function deleteDocument(projectId: string, collection: string, docId: string, databaseId?: string) {
-  const db = getDb(projectId, databaseId);
+  const db = await getDb(projectId, databaseId);
   await db.collection(collection).doc(docId).delete();
   return { success: true, id: docId };
 }

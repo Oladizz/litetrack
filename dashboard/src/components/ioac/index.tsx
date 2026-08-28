@@ -1,78 +1,74 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
-  Shield, Users, Building2, Sliders, Eye, UserCheck, X, Activity, Key 
+  Shield, Users, Building2, Sliders, Eye, UserCheck, X, Activity, Key, Bot 
 } from 'lucide-react';
 import { IdentityRecord, DynamicRole } from './types';
 import { IOACIdentityManager } from './identity-manager';
 import { IOACOrganizationWorkspace } from './organization-workspace';
 import { IOACRolePermissionMatrix } from './role-permission-matrix';
 import { IOACPolicyEngine } from './policy-engine';
+import { IOACAgentPermissions } from './agent-permissions';
+import { IOACAuthSecurity } from './auth-security';
+import { IOACTemporaryAccess } from './temporary-access';
+import { IOACAccessExplorer } from './access-explorer';
+import { IOACAccessAudit } from './access-audit';
+import { IOACAccessRisk } from './access-risk';
 import { IOACPermissionSimulator } from './permission-simulator';
 import { toast } from '@/components/ui/toast';
 
 export function UniversalIOAC() {
-  const [activeTab, setActiveTab] = useState<'identities' | 'org_workspaces' | 'roles' | 'policies' | 'simulator'>('identities');
+  const [activeTab, setActiveTab] = useState<string>('identities');
 
   // Impersonation Banner State
   const [impersonatingUser, setImpersonatingUser] = useState<IdentityRecord | null>(null);
 
-  const [identities, setIdentities] = useState<IdentityRecord[]>([
-    {
-      id: 'usr_9481',
-      name: 'John Doe',
-      email: 'john.doe@gmail.com',
-      type: 'admin',
-      roleId: 'r_ceo',
-      roleName: 'CEO / Executive',
-      status: 'active',
-      riskScore: 12,
-      mfaEnabled: true,
-      created: 'Yesterday',
-      sessions: [
-        { id: 's1', device: 'Chrome on Windows 11', ipLocation: 'Lagos, Nigeria', lastActive: '2 mins ago', isCurrent: true },
-        { id: 's2', device: 'Safari on iPhone 15', ipLocation: 'Lagos, Nigeria', lastActive: '2 days ago', isCurrent: false }
-      ]
-    },
-    {
-      id: 'usr_8392',
-      name: 'Sarah Connor',
-      email: 'sarah@cyberdyne.com',
-      type: 'user',
-      roleId: 'r_tech',
-      roleName: 'Repair Technician',
-      status: 'pending',
-      riskScore: 78,
-      mfaEnabled: false,
-      created: '3 days ago',
-      sessions: [
-        { id: 's3', device: 'Firefox on macOS', ipLocation: 'London, UK', lastActive: '1 hour ago', isCurrent: false }
-      ]
-    },
-    {
-      id: 'usr_6104',
-      name: 'Rabiu Oladizz',
-      email: 'oladizz.dev@gmail.com',
-      type: 'admin',
-      roleId: 'r_ceo',
-      roleName: 'Super Admin',
-      status: 'active',
-      riskScore: 5,
-      mfaEnabled: true,
-      created: 'Just now',
-      sessions: [
-        { id: 's4', device: 'Chrome on Linux', ipLocation: 'Lagos, Nigeria', lastActive: 'Just now', isCurrent: true }
-      ]
-    }
-  ]);
+  const [identities, setIdentities] = useState<IdentityRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('litetrack_token');
+        const headers = { Authorization: `Bearer ${token}` };
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://litetrack-api-916484331446.us-central1.run.app';
+        
+        const res = await fetch(`${apiUrl}/api/ioac/identities`, { headers });
+        const data = await res.json();
+        
+        if (data.identities) {
+          // Map DB schema to frontend IdentityRecord shape
+          const mapped = data.identities.map((row: any) => ({
+            id: row.id,
+            name: row.name,
+            email: row.email,
+            type: row.type || 'user',
+            roleId: row.roleId || '',
+            roleName: row.roleId || 'Standard',
+            status: row.status || 'active',
+            riskScore: row.riskScore || 0,
+            mfaEnabled: !!row.mfaEnabled,
+            created: row.created_at ? new Date(row.created_at.value).toLocaleDateString() : 'Unknown',
+            sessions: []
+          }));
+          setIdentities(mapped);
+        }
+      } catch (e) {
+        console.error("Failed to load identities", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   const roles: DynamicRole[] = [
     {
       id: 'r_ceo',
       name: 'CEO / Executive',
       description: 'Full strategic access to analytics, financial reports, and high-level dashboards.',
-      actions: ['read', 'create', 'update', 'export', 'approve', 'share', 'manage'],
+      resourcePermissions: [],
       fieldPermissions: [
         { fieldId: 'salary', fieldLabel: 'Salary & Compensation', allowed: true },
         { fieldId: 'balance', fieldLabel: 'Treasury Wallet Balance', allowed: true }
@@ -82,7 +78,7 @@ export function UniversalIOAC() {
       id: 'r_tech',
       name: 'Repair Technician',
       description: 'Manages repair jobs, inventory items, and customer hardware diagnostics.',
-      actions: ['read', 'create', 'update'],
+      resourcePermissions: [],
       fieldPermissions: [
         { fieldId: 'salary', fieldLabel: 'Salary & Compensation', allowed: false },
         { fieldId: 'balance', fieldLabel: 'Treasury Wallet Balance', allowed: false }
@@ -126,33 +122,39 @@ export function UniversalIOAC() {
             <Shield className="w-6 h-6 text-amber-400" /> Tool #4: Identity, Organizations & Access Control (IOAC)
           </h1>
           <p className="text-xs text-[#a6a6a6] mt-1">
-            Universal Identity Engine (Users, API Keys, AI Agents), Multi-Tenant Workspaces, Dynamic Roles, Field-Level Masking, IF-THEN Policies, and ⭐ Live Permission Sandbox.
+            Universal Identity Engine (Users, API Keys, AI Agents), Multi-Tenant Workspaces, Dynamic Roles, Field-Level Masking, IF-THEN Policies, and Live Permission Sandbox.
           </p>
         </div>
       </div>
 
       {/* 5 Component Tab Navigation */}
-      <div className="flex items-center gap-1.5 border-b border-[#262626] pb-3 overflow-x-auto hide-scrollbar text-xs font-semibold">
+      <div className="flex items-center gap-1.5 border-b border-[#262626] pb-3 overflow-x-auto hide-scrollbar text-[11px] font-semibold">
         {[
-          { id: 'identities', label: '1. Identity Directory & Sessions', icon: Users },
-          { id: 'org_workspaces', label: '2. Orgs, Workspaces & Teams', icon: Building2 },
-          { id: 'roles', label: '3. Dynamic Roles & Field Masking', icon: Shield },
-          { id: 'policies', label: '4. IF-THEN Policy Engine', icon: Sliders },
-          { id: 'simulator', label: '5. ⭐ Live Permission Simulator', icon: Eye },
+          { id: 'identities', label: '1. Identity & People', icon: Users },
+          { id: 'org_workspaces', label: '2. Orgs & Workspaces', icon: Building2 },
+          { id: 'roles', label: '3. Roles Engine', icon: Shield },
+          { id: 'matrix', label: '4. Permission Matrix', icon: Shield },
+          { id: 'policies', label: '5. Conditional Access', icon: Sliders },
+          { id: 'agents', label: '6. AI Agent Permissions', icon: Bot },
+          { id: 'auth', label: '7. Auth & Security', icon: Key },
+          { id: 'temporary', label: '8. Temporary Access', icon: Activity },
+          { id: 'explorer', label: '9. Access Explorer', icon: Eye },
+          { id: 'audit', label: '10. Audit & History', icon: Users },
+          { id: 'risk', label: '11. Risk Intelligence', icon: Shield },
         ].map(tab => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`px-4 py-2 rounded-xl border transition-all shrink-0 flex items-center gap-2 ${
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-3 py-1.5 rounded-lg border transition-all shrink-0 flex items-center gap-1.5 ${
                 isActive
                   ? 'bg-[#2266ec] border-[#2266ec] text-white shadow-lg shadow-[#2266ec]/20'
                   : 'bg-[#1a1a1a] border-[#262626] text-[#a6a6a6] hover:text-white hover:bg-[#262626]'
               }`}
             >
-              <Icon className="w-4 h-4" /> {tab.label}
+              <Icon className="w-3.5 h-3.5" /> {tab.label}
             </button>
           );
         })}
@@ -169,9 +171,29 @@ export function UniversalIOAC() {
 
       {activeTab === 'org_workspaces' && <IOACOrganizationWorkspace />}
 
-      {activeTab === 'roles' && <IOACRolePermissionMatrix />}
+      {activeTab === 'roles' && (
+        <div className="p-8 text-center bg-[#1a1a1a] rounded-xl border border-[#262626]">
+          <Shield className="w-8 h-8 text-[#a6a6a6] mx-auto mb-3" />
+          <h3 className="text-white font-bold mb-1">Roles Engine</h3>
+          <p className="text-sm text-[#a6a6a6]">Create reusable roles such as Super Admin, Manager, and Viewer. (Coming soon)</p>
+        </div>
+      )}
+      
+      {activeTab === 'matrix' && <IOACRolePermissionMatrix />}
 
       {activeTab === 'policies' && <IOACPolicyEngine />}
+      
+      {activeTab === 'agents' && <IOACAgentPermissions />}
+      
+      {activeTab === 'auth' && <IOACAuthSecurity />}
+      
+      {activeTab === 'temporary' && <IOACTemporaryAccess />}
+      
+      {activeTab === 'explorer' && <IOACAccessExplorer />}
+      
+      {activeTab === 'audit' && <IOACAccessAudit />}
+      
+      {activeTab === 'risk' && <IOACAccessRisk />}
 
       {activeTab === 'simulator' && <IOACPermissionSimulator roles={roles} />}
     </div>

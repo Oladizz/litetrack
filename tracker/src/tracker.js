@@ -38,10 +38,10 @@
 
     let sent = false;
     if (navigator.sendBeacon) {
-      try { sent = navigator.sendBeacon(apiUrl, new Blob([payload], { type: "application/json" })); } catch (e) { sent = false; }
+      try { sent = navigator.sendBeacon(apiUrl, new Blob([payload], { type: "text/plain" })); } catch (e) { sent = false; }
     }
     if (!sent) {
-      try { fetch(apiUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: payload, keepalive: true }).catch(()=>{}); } catch (e) {}
+      try { fetch(apiUrl, { method: "POST", headers: { "Content-Type": "text/plain" }, body: payload, keepalive: true }).catch(()=>{}); } catch (e) {}
     }
   }
 

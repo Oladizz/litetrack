@@ -142,8 +142,12 @@ export function Sidebar() {
             <>
               <div className="text-[10px] font-bold text-[#656565] mt-6 mb-2 px-2 uppercase tracking-widest truncate">Workspace: {state.projectName}</div>
               
-              <Link href="/dashboards" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/dashboards') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+                            <Link href="/dashboards" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/dashboards') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
                 <BarChart3 className="w-4 h-4" /> Analytics
+              </Link>
+              
+              <Link href={`/admin/${state.projectName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive(`/admin/${state.projectName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`) ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
+                <Database className="w-4 h-4" /> Database Admin
               </Link>
               
               {template === 'saas' && (
@@ -218,6 +222,8 @@ export function Sidebar() {
           {/* ======================================= */}
           {/* 3. ADMIN CONTEXT */}
           {/* ======================================= */}
+          {state.project === 'Workspace Admin' && (
+            <>
           <div className="text-[10px] font-bold text-[#656565] mt-6 mb-2 px-2 uppercase tracking-widest">Admin</div>
 
           <Link href="/enterprise-control" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/enterprise-control') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
@@ -239,6 +245,8 @@ export function Sidebar() {
           <Link href="/agent-studio" className={`w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium rounded transition-colors ${isActive('/agent-studio') ? 'bg-[#262626] text-white' : 'text-[#a6a6a6] hover:text-white hover:bg-[#262626]/50'}`}>
             <Bot className="w-4 h-4" /> AI Layer
           </Link>
+          </>
+          )}
 
         </div>
         

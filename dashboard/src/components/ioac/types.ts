@@ -1,6 +1,18 @@
+import React from 'react';
 export type IdentityType = 'user' | 'admin' | 'customer' | 'teacher' | 'student' | 'company' | 'api_key' | 'ai_agent' | 'service_account' | 'bot';
 
-export type PermissionAction = 'read' | 'create' | 'update' | 'delete' | 'export' | 'import' | 'approve' | 'archive' | 'share' | 'manage';
+export type PermissionScope = 'all_data' | 'organization' | 'department' | 'team' | 'assigned' | 'own' | 'none';
+
+export interface ResourcePermission {
+  resource: string;
+  actions: {
+    view: PermissionScope;
+    create: PermissionScope;
+    edit: PermissionScope;
+    delete: PermissionScope;
+    export: PermissionScope;
+  };
+}
 
 export interface FieldPermission {
   fieldId: string;
@@ -13,10 +25,8 @@ export interface DynamicRole {
   name: string;
   description: string;
   isSystem?: boolean;
-  actions: PermissionAction[];
+  resourcePermissions: ResourcePermission[];
   fieldPermissions?: FieldPermission[];
-  hiddenNavRoutes?: string[];
-  hiddenWidgets?: string[];
 }
 
 export interface IFPolicyRule {
@@ -67,7 +77,7 @@ export interface Workspace {
   id: string;
   name: string;
   category: 'Analytics' | 'Admin' | 'Developer' | 'Support' | 'Finance';
-  icon: string;
+  icon: React.ReactNode;
   allowedRoles: string[];
 }
 

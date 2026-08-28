@@ -14,13 +14,19 @@ const app = new Hono<{ Variables: { user: any } }>();
 
 app.use('*', cors());
 
-import { sendDailySummary, sendHourlySummary } from './telegram';
+import { sendDailySummary, sendHourlySummary, getDailySummaryText } from './telegram';
 
 app.get('/api/cron/telegram/daily', async (c) => {
   const chatId = process.env.TELEGRAM_CHAT_ID;
   if (!chatId) return c.json({ error: 'TELEGRAM_CHAT_ID not configured' }, 500);
   await sendDailySummary(chatId);
   return c.json({ success: true });
+});
+
+
+app.get('/api/bot/daily-text', async (c) => {
+  const text = await getDailySummaryText();
+  return c.json({ text });
 });
 
 app.get('/api/cron/telegram/hourly', async (c) => {
@@ -407,3 +413,141 @@ app.delete('/api/project-admin/:projectId/:collection/:docId', async (c) => {
     return c.json({ error: error.message }, 500);
   }
 });
+
+import * as ioac from './ioac';
+
+// ==========================================
+// IOAC ROUTES
+// ==========================================
+
+app.get('/api/ioac/identities', async (c) => {
+  const data = await ioac.getIdentities();
+  return c.json({ identities: data });
+});
+
+app.post('/api/ioac/identities', async (c) => {
+  const body = await c.req.json();
+  await ioac.createIdentity(body);
+  return c.json({ success: true });
+});
+
+app.get('/api/ioac/orgs', async (c) => {
+  const data = await ioac.getOrgs();
+  return c.json({ orgs: data });
+});
+
+app.post('/api/ioac/orgs', async (c) => {
+  const body = await c.req.json();
+  await ioac.createOrg(body);
+  return c.json({ success: true });
+});
+
+app.get('/api/ioac/roles', async (c) => {
+  const data = await ioac.getRoles();
+  return c.json({ roles: data });
+});
+
+app.post('/api/ioac/roles', async (c) => {
+  const body = await c.req.json();
+  await ioac.createRole(body);
+  return c.json({ success: true });
+});
+
+app.put('/api/ioac/roles/:id/matrix', async (c) => {
+  const id = c.req.param('id');
+  const body = await c.req.json();
+  await ioac.updateRoleMatrix(id, body.matrix_json);
+  return c.json({ success: true });
+});
+
+app.get('/api/ioac/policies', async (c) => {
+  const data = await ioac.getPolicies();
+  return c.json({ policies: data });
+});
+
+app.post('/api/ioac/policies', async (c) => {
+  const body = await c.req.json();
+  await ioac.createPolicy(body);
+  return c.json({ success: true });
+});
+
+app.put('/api/ioac/policies/:id/status', async (c) => {
+  const id = c.req.param('id');
+  const body = await c.req.json();
+  await ioac.updatePolicyStatus(id, body.status);
+  return c.json({ success: true });
+});
+
+// IOAC - Workspaces
+app.get('/api/ioac/workspaces', async (c) => {
+  const workspaces = await ioac.getWorkspaces();
+  return c.json({ workspaces });
+});
+app.post('/api/ioac/workspaces', async (c) => {
+  const body = await c.req.json();
+  await ioac.createWorkspace(body);
+  return c.json({ success: true });
+});
+
+// IOAC - Teams
+app.get('/api/ioac/teams', async (c) => {
+  const teams = await ioac.getTeams();
+  return c.json({ teams });
+});
+app.post('/api/ioac/teams', async (c) => {
+  const body = await c.req.json();
+  await ioac.createTeam(body);
+  return c.json({ success: true });
+});
+
+// IOAC - Agents
+app.get('/api/ioac/agents', async (c) => {
+  const agents = await ioac.getAgents();
+  return c.json({ agents });
+});
+app.post('/api/ioac/agents', async (c) => {
+  const body = await c.req.json();
+  await ioac.createAgent(body);
+  return c.json({ success: true });
+});
+
+// IOAC - Auth Settings
+app.get('/api/ioac/auth', async (c) => {
+  const settings = await ioac.getAuthSettings();
+  return c.json({ settings });
+});
+app.post('/api/ioac/auth', async (c) => {
+  const body = await c.req.json();
+  await ioac.saveAuthSettings(body);
+  return c.json({ success: true });
+});
+
+// IOAC - Temp Grants
+app.get('/api/ioac/temp_grants', async (c) => {
+  const grants = await ioac.getTempGrants();
+  return c.json({ grants });
+});
+app.post('/api/ioac/temp_grants', async (c) => {
+  const body = await c.req.json();
+  await ioac.createTempGrant(body);
+  return c.json({ success: true });
+});
+app.put('/api/ioac/temp_grants/:id/revoke', async (c) => {
+  const id = c.req.param('id');
+  await ioac.revokeTempGrant(id);
+  return c.json({ success: true });
+});
+
+// IOAC - Audit Logs
+app.get('/api/ioac/audit_logs', async (c) => {
+  const logs = await ioac.getAuditLogs();
+  return c.json({ logs });
+});
+app.post('/api/ioac/audit_logs', async (c) => {
+  const body = await c.req.json();
+  await ioac.logAuditAction(body);
+  return c.json({ success: true });
+});
+
+
+

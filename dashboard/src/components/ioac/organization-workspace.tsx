@@ -1,34 +1,83 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Building2, Layout, Users2, Globe, Clock, DollarSign, Plus } from 'lucide-react';
 import { Organization, Workspace, Team } from './types';
 import { toast } from '@/components/ui/toast';
 
 export function IOACOrganizationWorkspace() {
-  const [org, setOrg] = useState<Organization>({
-    id: 'org_oladizz',
-    name: 'OLADIZZ ENTERPRISE',
-    timezone: 'UTC+1 (Lagos / West Africa)',
-    currency: 'USD ($)',
-    invitePolicy: 'open'
-  });
+  const [org, setOrg] = useState<Organization | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([
-    { id: 'ws_analytics', name: 'Analytics Suite', category: 'Analytics', icon: '📊', allowedRoles: ['Admin', 'Analyst'] },
-    { id: 'ws_admin', name: 'Admin OS Console', category: 'Admin', icon: '⚡', allowedRoles: ['Super Admin', 'Admin'] },
-    { id: 'ws_dev', name: 'Developer Hub', category: 'Developer', icon: '💻', allowedRoles: ['Developer', 'Engineer'] },
-    { id: 'ws_support', name: 'Support & Tickets', category: 'Support', icon: '🎧', allowedRoles: ['Support Lead', 'Agent'] },
-    { id: 'ws_finance', name: 'Finance & Revenue', category: 'Finance', icon: '💰', allowedRoles: ['Finance Manager', 'CFO'] },
-  ]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('litetrack_token');
+        const headers = { Authorization: `Bearer ${token}` };
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://litetrack-api-916484331446.us-central1.run.app';
+        
+        // Fetch Orgs
+        const resOrg = await fetch(`${apiUrl}/api/ioac/orgs`, { headers });
+        const dataOrg = await resOrg.json();
+        if (dataOrg.orgs && dataOrg.orgs.length > 0) {
+          const row = dataOrg.orgs[0];
+          setOrg({
+            id: row.id,
+            name: row.name,
+            timezone: 'UTC', // We'll update this to be dynamic later
+            currency: 'USD',
+            invitePolicy: 'open'
+          });
+        } else {
+          setOrg({
+            id: 'org_pending',
+            name: 'No Organization Found',
+            timezone: 'UTC',
+            currency: 'USD',
+            invitePolicy: 'open'
+          });
+        }
 
-  const [teams, setTeams] = useState<Team[]>([
-    { id: 't_eng', name: 'Engineering Team', memberCount: 14, workspaceId: 'ws_dev' },
-    { id: 't_support', name: 'Support & Success', memberCount: 8, workspaceId: 'ws_support' },
-    { id: 't_sales', name: 'Global Sales & Deals', memberCount: 12, workspaceId: 'ws_analytics' },
-    { id: 't_fin', name: 'Treasury & Accounting', memberCount: 5, workspaceId: 'ws_finance' },
-  ]);
+        // Fetch Workspaces
+        const resWs = await fetch(`${apiUrl}/api/ioac/workspaces`, { headers });
+        const dataWs = await resWs.json();
+        if (dataWs.workspaces) {
+          setWorkspaces(dataWs.workspaces.map((w: any) => ({
+            id: w.id,
+            name: w.name,
+            category: w.category,
+            icon: <Layout className="w-4 h-4" />, // Fallback icon
+            allowedRoles: w.allowedRoles ? JSON.parse(w.allowedRoles) : []
+          })));
+        }
 
+        // Fetch Teams
+        const resTeams = await fetch(`${apiUrl}/api/ioac/teams`, { headers });
+        const dataTeams = await resTeams.json();
+        if (dataTeams.teams) {
+          setTeams(dataTeams.teams.map((t: any) => ({
+            id: t.id,
+            name: t.name,
+            memberCount: 0, // Compute dynamically later
+            workspaceId: t.workspaceId
+          })));
+        }
+
+      } catch(e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
+
+  if (loading) return <div className="text-white text-xs p-4">Loading Org Data...</div>;
+  if (!org) return <div className="text-white text-xs p-4">No org data.</div>;
+  
   return (
     <div className="space-y-6 font-sans">
       {/* Organization Settings Banner */}
@@ -36,7 +85,7 @@ export function IOACOrganizationWorkspace() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-[#2266ec]/20 border border-[#2266ec]/40 flex items-center justify-center text-xl shrink-0">
-              🏢
+              <Building2 className="w-6 h-6 text-[#2266ec]" />
             </div>
             <div>
               <h3 className="font-bold text-white text-base">{org.name}</h3>
@@ -76,7 +125,28 @@ export function IOACOrganizationWorkspace() {
               <Layout className="w-4 h-4 text-[#2266ec]" /> Workspaces ({workspaces.length})
             </h4>
             <button 
-              onClick={() => toast('Created new workspace', { type: 'success' })}
+              onClick={async () => {
+                const name = prompt("Enter Workspace Name:");
+                if (!name) return;
+                const token = localStorage.getItem('litetrack_token');
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://litetrack-api-916484331446.us-central1.run.app';
+                try {
+                  await fetch(`${apiUrl}/api/ioac/workspaces`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({
+                      id: 'ws_' + Math.floor(Math.random() * 1000),
+                      name,
+                      category: 'General',
+                      allowedRoles: JSON.stringify(['Admin'])
+                    })
+                  });
+                  toast('Created new workspace. Refreshing...', { type: 'success' });
+                  window.location.reload();
+                } catch(e) {
+                  toast('Failed to create workspace', { type: 'error' });
+                }
+              }}
               className="text-xs text-[#2266ec] hover:underline font-semibold flex items-center gap-1"
             >
               <Plus className="w-3.5 h-3.5" /> Add Workspace
@@ -112,7 +182,30 @@ export function IOACOrganizationWorkspace() {
               <Users2 className="w-4 h-4 text-purple-400" /> Teams & Departments ({teams.length})
             </h4>
             <button 
-              onClick={() => toast('Created new team', { type: 'success' })}
+              onClick={async () => {
+                const name = prompt("Enter Team Name:");
+                if (!name) return;
+                const workspaceId = prompt("Enter Scoped Workspace ID (e.g. ws_123):", workspaces[0]?.id || 'ws_123');
+                if (!workspaceId) return;
+                
+                const token = localStorage.getItem('litetrack_token');
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://litetrack-api-916484331446.us-central1.run.app';
+                try {
+                  await fetch(`${apiUrl}/api/ioac/teams`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({
+                      id: 't_' + Math.floor(Math.random() * 1000),
+                      name,
+                      workspaceId
+                    })
+                  });
+                  toast('Created new team. Refreshing...', { type: 'success' });
+                  window.location.reload();
+                } catch(e) {
+                  toast('Failed to create team', { type: 'error' });
+                }
+              }}
               className="text-xs text-[#2266ec] hover:underline font-semibold flex items-center gap-1"
             >
               <Plus className="w-3.5 h-3.5" /> Add Team

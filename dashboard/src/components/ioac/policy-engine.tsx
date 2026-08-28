@@ -6,39 +6,64 @@ import { IFPolicyRule } from './types';
 import { toast } from '@/components/ui/toast';
 
 export function IOACPolicyEngine() {
-  const [policies, setPolicies] = useState<IFPolicyRule[]>([
-    {
-      id: 'pol_1',
-      name: 'High-Value Manager Approval Policy',
-      conditionField: 'Amount',
-      operator: '>',
-      conditionValue: '10000',
-      actionEffect: 'require_approval',
-      isActive: true
-    },
-    {
-      id: 'pol_2',
-      name: 'Geofence Withdrawal Guard',
-      conditionField: 'Country',
-      operator: '!=',
-      conditionValue: 'Nigeria',
-      actionEffect: 'disable_withdrawal',
-      isActive: true
-    },
-    {
-      id: 'pol_3',
-      name: 'Student Billing Masking Policy',
-      conditionField: 'Role',
-      operator: '=',
-      conditionValue: 'Student',
-      actionEffect: 'hide_billing',
-      isActive: true
-    }
-  ]);
+  const [policies, setPolicies] = useState<IFPolicyRule[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const togglePolicy = (id: string) => {
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('litetrack_token');
+        const headers = { Authorization: `Bearer ${token}` };
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://litetrack-api-916484331446.us-central1.run.app';
+        
+        const res = await fetch(`${apiUrl}/api/ioac/policies`, { headers });
+        const data = await res.json();
+        
+        if (data.policies) {
+          const parsed = data.policies.map((p: any) => {
+            const cond = p.conditions_json ? JSON.parse(p.conditions_json) : {};
+            const act = p.actions_json ? JSON.parse(p.actions_json) : {};
+            return {
+              id: p.id,
+              name: p.name,
+              conditionField: cond.field || 'Amount',
+              operator: cond.operator || '>',
+              conditionValue: cond.value || '0',
+              actionEffect: act.effect || 'require_approval',
+              isActive: p.status === 'active'
+            };
+          });
+          setPolicies(parsed);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const togglePolicy = async (id: string) => {
+    const policy = policies.find(p => p.id === id);
+    if (!policy) return;
+    const newStatus = policy.isActive ? 'disabled' : 'active';
+    
+    // optimistic update
     setPolicies(prev => prev.map(p => p.id === id ? { ...p, isActive: !p.isActive } : p));
-    toast('Policy status toggled', { type: 'info' });
+    
+    try {
+      const token = localStorage.getItem('litetrack_token');
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://litetrack-api-916484331446.us-central1.run.app';
+      await fetch(`${apiUrl}/api/ioac/policies/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ status: newStatus })
+      });
+      toast('Policy status toggled', { type: 'info' });
+    } catch(e) {
+      toast('Failed to toggle policy', { type: 'error' });
+    }
   };
 
   return (
@@ -51,7 +76,29 @@ export function IOACPolicyEngine() {
           <p className="text-xs text-[#a6a6a6] mt-0.5">Automated conditional security policies beyond static role permissions.</p>
         </div>
         <button
-          onClick={() => toast('Created new policy rule', { type: 'success' })}
+          onClick={async () => {
+            const name = prompt("Enter Policy Name");
+            if (!name) return;
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://litetrack-api-916484331446.us-central1.run.app';
+            const token = localStorage.getItem('litetrack_token');
+            try {
+              await fetch(`${apiUrl}/api/ioac/policies`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({
+                  id: 'pol_' + Math.floor(Math.random() * 1000),
+                  name,
+                  description: 'Custom Policy Rule',
+                  conditions_json: JSON.stringify({ field: 'Amount', operator: '>', value: '10000' }),
+                  actions_json: JSON.stringify({ effect: 'require_approval' }),
+                  status: 'active'
+                })
+              });
+              toast('Created new policy rule. Refresh to view.', { type: 'success' });
+            } catch(e) {
+              toast('Failed to create policy', { type: 'error' });
+            }
+          }}
           className="px-3.5 py-1.5 bg-[#2266ec] hover:bg-[#1d57cc] text-white text-xs font-semibold rounded-lg transition-colors flex items-center gap-1 shadow"
         >
           <Plus className="w-3.5 h-3.5" /> Add Policy Rule
@@ -59,7 +106,9 @@ export function IOACPolicyEngine() {
       </div>
 
       <div className="space-y-3">
-        {policies.map(p => (
+        {loading && <div className="text-[#a6a6a6] text-xs">Loading policies...</div>}
+        {!loading && policies.length === 0 && <div className="text-[#a6a6a6] text-xs">No conditional policies found.</div>}
+        {!loading && policies.map(p => (
           <div key={p.id} className="bg-[#121212] p-4 rounded-xl border border-[#262626] flex items-center justify-between gap-4 text-xs font-mono">
             <div className="space-y-1">
               <div className="font-bold text-white flex items-center gap-2">

@@ -2,6 +2,7 @@ import { http, Request, Response } from '@google-cloud/functions-framework';
 import { BigQuery } from '@google-cloud/bigquery';
 import { parseUserAgent, extractUtmParams, hashVisitorId, parseReferrerSource } from './utils';
 import * as crypto from 'crypto';
+import * as geoip from 'geoip-lite';
 
 const bq = new BigQuery();
 const DATASET = 'litetrack';
@@ -25,7 +26,15 @@ http('ingestEvent', async (req: Request, res: Response) => {
   }
 
   try {
-    const bodyData = req.body || {};
+    let bodyData = req.body;
+    if (typeof bodyData === 'string' || Buffer.isBuffer(bodyData)) {
+      try {
+        bodyData = JSON.parse(bodyData.toString());
+      } catch(e) {
+        bodyData = {};
+      }
+    }
+    bodyData = bodyData || {};
     const events = Array.isArray(bodyData) ? bodyData : [bodyData];
     
     if (events.length === 0) {
@@ -37,9 +46,19 @@ http('ingestEvent', async (req: Request, res: Response) => {
     const forwardedFor = headers['x-forwarded-for'];
     const ip = (Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor)?.split(',')[0] || 'unknown';
     const userAgent = headers['user-agent'] || '';
-    const country = 'unknown'; 
-    const city = 'unknown';
-    const region = 'unknown';
+    
+    let country = 'unknown'; 
+    let city = 'unknown';
+    let region = 'unknown';
+    
+    if (ip !== 'unknown') {
+      const geo = geoip.lookup(ip);
+      if (geo) {
+        country = geo.country || 'unknown';
+        city = geo.city || 'unknown';
+        region = geo.region || 'unknown';
+      }
+    }
 
     // Parse UA (same for all events in this batch from same client)
     const { browser, browser_version, os, os_version, device, device_brand, device_model } = parseUserAgent(userAgent);

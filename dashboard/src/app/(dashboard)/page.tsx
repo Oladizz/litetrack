@@ -462,11 +462,25 @@ export default function Dashboard() {
       }
       return r.json();
     }).catch(() => null);
-    if (data) setStats(data);
+    if (data) {
+      if (data.countries) {
+        data.countries = data.countries.map((c: any) => {
+          let fullName = c.country;
+          if (c.country && c.country !== 'unknown' && c.country.length === 2) {
+            try {
+              fullName = new Intl.DisplayNames(['en'], { type: 'region' }).of(c.country.toUpperCase()) || c.country;
+            } catch (e) {}
+          }
+          return { ...c, country: fullName };
+        });
+      }
+      setStats(data);
+    }
     setLoading(false);
   };
 
   const [adminViewMode, setAdminViewMode] = useState<'analytics' | 'admin'>('analytics');
+  const [mapTooltip, setMapTooltip] = useState<{show: boolean, content: string, x: number, y: number, stats?: any}>({show: false, content: '', x: 0, y: 0});
   
   if (!token) return null;
 
@@ -904,8 +918,7 @@ export default function Dashboard() {
                         
                         return geographies.map((geo: any) => {
                           const geoName = geo.properties.name.toLowerCase();
-                          const isHighlighted = countryNamesWithTraffic.includes(geoName) || 
-                                                (stats?.countries || []).some((c:any) => c.country === geo.properties["iso_a2"]);
+                          const isHighlighted = countryNamesWithTraffic.includes(geoName);
                           
                           return (
                             <Geography 
@@ -919,12 +932,56 @@ export default function Dashboard() {
                                 hover: { fill: isHighlighted ? "#3b7cfc" : "#333", outline: "none", cursor: "pointer" },
                                 pressed: { outline: "none" },
                               }}
+                              onMouseEnter={(e: any) => {
+                                const geoStats = stats?.countries?.find((c: any) => c.country.toLowerCase() === geoName);
+                                setMapTooltip({
+                                  show: true,
+                                  content: geo.properties.name,
+                                  x: e.clientX,
+                                  y: e.clientY,
+                                  stats: geoStats ? { views: geoStats.views, sessions: geoStats.sessions } : null
+                                });
+                              }}
+                              onMouseMove={(e: any) => {
+                                setMapTooltip(prev => ({...prev, x: e.clientX, y: e.clientY}));
+                              }}
+                              onMouseLeave={() => {
+                                setMapTooltip(prev => ({...prev, show: false}));
+                              }}
                             />
                           );
                         });
                       }}
                     </Geographies>
                   </ComposableMap>
+                  
+                  {mapTooltip.show && (
+                    <div 
+                      className="fixed pointer-events-none z-[9999] bg-[#1a1a1a]/90 backdrop-blur-md border border-white/[0.05] p-3 rounded-lg shadow-[0_8px_30px_rgba(0,0,0,0.5)] transform -translate-x-1/2 -translate-y-[calc(100%+15px)]"
+                      style={{ left: mapTooltip.x, top: mapTooltip.y }}
+                    >
+                      <p className="text-[#a6a6a6] text-[11px] mb-1 font-medium tracking-wide uppercase">{mapTooltip.content}</p>
+                      {mapTooltip.stats ? (
+                        <div className="flex flex-col gap-1.5 mt-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-[#2266ec]"></div>
+                            <p className="text-[#fafafa] text-[13px] font-semibold tabular-nums">
+                              {mapTooltip.stats.views.toLocaleString()} <span className="text-[#656565] font-normal ml-1">Views</span>
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-[#656565]"></div>
+                            <p className="text-[#fafafa] text-[13px] font-semibold tabular-nums">
+                              {mapTooltip.stats.sessions.toLocaleString()} <span className="text-[#656565] font-normal ml-1">Sess.</span>
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-[#656565] text-[11px] italic mt-1">No recorded traffic</p>
+                      )}
+                    </div>
+                  )}
+
                   <span className="absolute bottom-2 right-2 text-[10px] text-[#656565]">Geo data provided by MaxMind</span>
                 </div>
               </div>

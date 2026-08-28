@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { 
-  User, Shield, Key, Bot, Monitor, AlertTriangle, CheckCircle, UserCheck, Lock, Trash2, Eye 
+  User, Users, Crown, Zap, Shield, Key, Bot, Monitor, AlertTriangle, CheckCircle, UserCheck, Lock, Trash2, Eye 
 } from 'lucide-react';
 import { IdentityRecord, IdentityType } from './types';
 import { toast } from '@/components/ui/toast';
@@ -25,15 +25,16 @@ export function IOACIdentityManager({
 
   return (
     <div className="space-y-4 font-sans">
-      {/* Identity Type Tabs */}
+      <div className="flex justify-between items-center border-b border-[#262626] pb-3">
+        {/* Identity Type Tabs */}
       <div className="flex items-center gap-1.5 border-b border-[#262626] pb-3 overflow-x-auto hide-scrollbar text-xs">
         {[
-          { id: 'all', label: 'All Identities', icon: '👤' },
-          { id: 'user', label: 'Users & Customers', icon: '👥' },
-          { id: 'admin', label: 'Admins & Staff', icon: '👑' },
-          { id: 'api_key', label: 'API Key Identities', icon: '🔑' },
-          { id: 'ai_agent', label: 'AI Agent Identities', icon: '⚡' },
-          { id: 'bot', label: 'Service Bots', icon: '🤖' },
+          { id: 'all', label: 'All Identities', icon: <User className="w-4 h-4" /> },
+          { id: 'user', label: 'Users & Customers', icon: <Users className="w-4 h-4" /> },
+          { id: 'admin', label: 'Admins & Staff', icon: <Crown className="w-4 h-4" /> },
+          { id: 'api_key', label: 'API Key Identities', icon: <Key className="w-4 h-4" /> },
+          { id: 'ai_agent', label: 'AI Agent Identities', icon: <Zap className="w-4 h-4" /> },
+          { id: 'bot', label: 'Service Bots', icon: <Bot className="w-4 h-4" /> },
         ].map(tab => {
           const isActive = selectedType === tab.id;
           return (
@@ -50,6 +51,40 @@ export function IOACIdentityManager({
             </button>
           );
         })}
+        </div>
+        <button 
+          onClick={() => {
+            const name = prompt("Enter Name");
+            if (!name) return;
+            const email = prompt("Enter Email");
+            
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://litetrack-api-916484331446.us-central1.run.app';
+            const token = localStorage.getItem('litetrack_token');
+            
+            fetch(`${apiUrl}/api/ioac/identities`, {
+              method: 'POST',
+              headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({
+                id: 'usr_' + Math.floor(Math.random() * 10000),
+                name,
+                email,
+                type: 'user',
+                roleId: 'r_standard',
+                status: 'active',
+                riskScore: 0,
+                mfaEnabled: false
+              })
+            }).then(() => {
+              toast('Identity Created. Please refresh to see the new identity.', { type: 'success' });
+            });
+          }}
+          className="bg-[#2266ec] text-white px-3 py-1.5 rounded text-xs font-semibold"
+        >
+          + Add Identity
+        </button>
       </div>
 
       {/* Identities Directory Grid */}
