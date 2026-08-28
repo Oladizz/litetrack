@@ -325,7 +325,7 @@ export default function Dashboard() {
   const [stats, setStats] = useState<any>(null);
   const [liveVisitors, setLiveVisitors] = useState<number>(0);
   const [isConnected, setIsConnected] = useState<boolean>(false);
-  const [mapTooltip, setMapTooltip] = useState<{content: string, x: number, y: number} | null>(null);
+
   const [loading, setLoading] = useState(true);
   const [projectMenuOpen, setProjectMenuOpen] = useState(false);
   const [activeMetric, setActiveMetric] = useState('UNIQUE VISITORS');

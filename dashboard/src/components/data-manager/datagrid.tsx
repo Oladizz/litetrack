@@ -259,69 +259,66 @@ export function UniversalDataGrid({
     <div className="w-full relative">
       {/* Table Container - Borderless, Industrial */}
       <div className="w-full overflow-x-auto bg-transparent pb-24">
-        <table className="w-full text-left border-collapse">
-          {/* Table Header */}
-          <thead>
-            <tr className="border-b border-[#262626] bg-[#121212] text-[10px] font-bold text-[#656565] uppercase tracking-wider select-none sticky top-0 z-20 backdrop-blur-md bg-opacity-90">
-              <th className="p-3 w-10 text-center">
-                {/* Header Checkbox (Invisible until hovered or selected) */}
-                <input
-                  type="checkbox"
-                  checked={rows.length > 0 && selectedRowIds.length === rows.length}
-                  onChange={handleSelectAllToggle}
-                  className={`rounded border-[#404040] bg-transparent text-[#2266ec] focus:ring-0 cursor-pointer transition-opacity duration-100 ${
-                    selectedRowIds.length > 0 ? 'opacity-100' : 'opacity-0 hover:opacity-100'
-                  }`}
-                />
-              </th>
+        <div className="flex flex-col min-w-max w-full">
+          {/* Header Row */}
+          <div className="flex items-center border-b border-[#262626] bg-[#121212] text-[10px] font-bold text-[#656565] uppercase tracking-wider select-none sticky top-0 z-20 backdrop-blur-md bg-opacity-90">
+            <div className="p-3 w-10 text-center shrink-0">
+              {/* Header Checkbox */}
+              <input
+                type="checkbox"
+                checked={rows.length > 0 && selectedRowIds.length === rows.length}
+                onChange={handleSelectAllToggle}
+                className={`rounded border-[#404040] bg-transparent text-[#2266ec] focus:ring-0 cursor-pointer transition-opacity duration-100 ${
+                  selectedRowIds.length > 0 ? 'opacity-100' : 'opacity-0 hover:opacity-100'
+                }`}
+              />
+            </div>
 
-              {columns.map((col) => {
-                const sortObj = sortState.find(s => s.columnId === col.id);
-                return (
-                  <th
-                    key={col.id}
-                    className="py-3 px-2 font-semibold group relative hover:text-white transition-colors duration-100 ease-out"
-                    style={{ minWidth: col.width || 140 }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <button
-                        onClick={() => handleHeaderSort(col.id)}
-                        className="flex items-center gap-1.5 outline-none"
-                      >
-                        <span>{col.label}</span>
-                        {sortObj ? (
-                          sortObj.direction === 'asc' ? <ArrowUp className="w-3 h-3 text-[#fafafa]" /> : <ArrowDown className="w-3 h-3 text-[#fafafa]" />
-                        ) : (
-                          <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-40 transition-opacity duration-100" />
-                        )}
-                      </button>
-                    </div>
-                  </th>
-                );
-              })}
-            </tr>
-          </thead>
+            {columns.map((col) => {
+              const sortObj = sortState.find(s => s.columnId === col.id);
+              return (
+                <div
+                  key={col.id}
+                  className="py-3 px-2 font-semibold group relative hover:text-white transition-colors duration-100 ease-out shrink-0"
+                  style={{ width: col.width || 140 }}
+                >
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={() => handleHeaderSort(col.id)}
+                      className="flex items-center gap-1.5 outline-none w-full text-left"
+                    >
+                      <span>{col.label}</span>
+                      {sortObj ? (
+                        sortObj.direction === 'asc' ? <ArrowUp className="w-3 h-3 text-[#fafafa]" /> : <ArrowDown className="w-3 h-3 text-[#fafafa]" />
+                      ) : (
+                        <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-40 transition-opacity duration-100" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
 
-          {/* Table Body */}
-          <tbody className="divide-y divide-[#1a1a1a] text-[13px]">
+          {/* Body Rows */}
+          <div className="flex flex-col divide-y divide-[#1a1a1a] text-[13px]">
             {rows.map((row, idx) => {
               const isSelected = selectedRowIds.includes(row.id);
               
               return (
-                <tr
+                <div
                   key={row.id || idx}
                   onClick={() => onRowClick(row)}
                   onContextMenu={(e) => onContextMenu(e, row)}
-                  className={`group relative transition-all duration-100 ease-out cursor-pointer ${
+                  className={`flex items-center group relative transition-all duration-100 ease-out cursor-pointer ${
                     isSelected ? 'bg-[#2266ec]/5' : 'hover:bg-[#1a1a1a]'
                   }`}
                 >
                   {/* Row Checkbox */}
-                  <td 
-                    className="p-3 text-center z-10 relative"
+                  <div 
+                    className="p-3 w-10 text-center z-10 relative shrink-0"
                     onClick={(e) => handleRowCheck(idx, row.id, e)}
                   >
-                    {/* Subtle left accent on hover/select */}
                     <div className={`absolute left-0 top-0 bottom-0 w-[2px] transition-colors duration-100 ${
                       isSelected ? 'bg-[#2266ec]' : 'bg-transparent group-hover:bg-[#333]'
                     }`} />
@@ -334,21 +331,22 @@ export function UniversalDataGrid({
                         isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
                       }`}
                     />
-                  </td>
+                  </div>
 
-                  {/* Render Column Cells */}
+                  {/* Render Cells */}
                   {columns.map((col) => {
                     const val = row[col.id];
                     const isEditing = editingCell?.rowId === row.id && editingCell?.columnId === col.id;
 
                     return (
-                      <td
+                      <div
                         key={col.id}
                         onDoubleClick={(e) => handleCellDoubleClick(e, row.id, col.id, val)}
-                        className="py-3 px-2 whitespace-nowrap"
+                        className="py-3 px-2 whitespace-nowrap overflow-hidden shrink-0 flex items-center"
+                        style={{ width: col.width || 140 }}
                       >
                         {isEditing ? (
-                          <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                          <div className="flex items-center gap-1 w-full" onClick={(e) => e.stopPropagation()}>
                             <input
                               type="text"
                               autoFocus
@@ -360,27 +358,27 @@ export function UniversalDataGrid({
                               }}
                               className="bg-[#121212] border border-[#2266ec] text-white px-2 py-1 rounded text-xs outline-none w-full font-mono"
                             />
-                            <button onClick={handleCellEditSave} className="p-1 bg-[#2266ec] text-white rounded">
+                            <button onClick={handleCellEditSave} className="p-1 bg-[#2266ec] text-white rounded shrink-0">
                               <Check className="w-3 h-3" />
                             </button>
                           </div>
                         ) : (
                           renderCellContent(col, val, row)
                         )}
-                      </td>
+                      </div>
                     );
                   })}
                   
-                  {/* Subtle actions that fade in on hover on the far right edge */}
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-100 flex items-center gap-1 bg-gradient-to-l from-[#1a1a1a] via-[#1a1a1a] pl-6 pr-2 py-1">
+                  {/* Floating Actions on Hover */}
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-100 flex items-center gap-1 bg-gradient-to-l from-[#1a1a1a] via-[#1a1a1a] pl-6 pr-2 py-1 z-10">
                      <button className="text-[#a6a6a6] hover:text-white p-1 rounded transition-colors"><Edit2 className="w-3.5 h-3.5" /></button>
                      <button className="text-[#a6a6a6] hover:text-white p-1 rounded transition-colors"><MoreHorizontal className="w-3.5 h-3.5" /></button>
                   </div>
-                </tr>
+                </div>
               );
             })}
-          </tbody>
-        </table>
+          </div>
+        </div>
       </div>
 
       {/* Floating Bottom Action Bar (Multi-Select iOS Style) */}
