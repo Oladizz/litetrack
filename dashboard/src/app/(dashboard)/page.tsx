@@ -481,6 +481,7 @@ export default function Dashboard() {
 
   const [adminViewMode, setAdminViewMode] = useState<'analytics' | 'admin'>('analytics');
   const [mapTooltip, setMapTooltip] = useState<{show: boolean, content: string, x: number, y: number, stats?: any}>({show: false, content: '', x: 0, y: 0});
+  const mapTooltipRef = useRef<HTMLDivElement>(null);
   
   if (!token) return null;
 
@@ -939,11 +940,18 @@ export default function Dashboard() {
                                   content: geo.properties.name,
                                   x: e.clientX,
                                   y: e.clientY,
-                                  stats: geoStats ? { views: geoStats.views, sessions: geoStats.sessions } : null
+                                  stats: geoStats ? { views: geoStats.views || 0, sessions: geoStats.sessions || 0 } : null
                                 });
+                                if (mapTooltipRef.current) {
+                                  mapTooltipRef.current.style.left = `${e.clientX}px`;
+                                  mapTooltipRef.current.style.top = `${e.clientY}px`;
+                                }
                               }}
                               onMouseMove={(e: any) => {
-                                setMapTooltip(prev => ({...prev, x: e.clientX, y: e.clientY}));
+                                if (mapTooltipRef.current) {
+                                  mapTooltipRef.current.style.left = `${e.clientX}px`;
+                                  mapTooltipRef.current.style.top = `${e.clientY}px`;
+                                }
                               }}
                               onMouseLeave={() => {
                                 setMapTooltip(prev => ({...prev, show: false}));
@@ -957,6 +965,7 @@ export default function Dashboard() {
                   
                   {mapTooltip.show && (
                     <div 
+                      ref={mapTooltipRef}
                       className="fixed pointer-events-none z-[9999] bg-[#1a1a1a]/90 backdrop-blur-md border border-white/[0.05] p-3 rounded-lg shadow-[0_8px_30px_rgba(0,0,0,0.5)] transform -translate-x-1/2 -translate-y-[calc(100%+15px)]"
                       style={{ left: mapTooltip.x, top: mapTooltip.y }}
                     >
@@ -966,13 +975,13 @@ export default function Dashboard() {
                           <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-[#2266ec]"></div>
                             <p className="text-[#fafafa] text-[13px] font-semibold tabular-nums">
-                              {mapTooltip.stats.views.toLocaleString()} <span className="text-[#656565] font-normal ml-1">Views</span>
+                              {Number(mapTooltip.stats.views || 0).toLocaleString()} <span className="text-[#656565] font-normal ml-1">Views</span>
                             </p>
                           </div>
                           <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-[#656565]"></div>
                             <p className="text-[#fafafa] text-[13px] font-semibold tabular-nums">
-                              {mapTooltip.stats.sessions.toLocaleString()} <span className="text-[#656565] font-normal ml-1">Sess.</span>
+                              {Number(mapTooltip.stats.sessions || 0).toLocaleString()} <span className="text-[#656565] font-normal ml-1">Sess.</span>
                             </p>
                           </div>
                         </div>
